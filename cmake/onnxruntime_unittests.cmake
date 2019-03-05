@@ -503,7 +503,6 @@ if (onnxruntime_BUILD_SHARED_LIB)
 endif()
 
 if (onnxruntime_BUILD_HOSTING)
-  #add_executable(hosting_tests "${ONNXRUNTIME_ROOT}/test/hosting/http_routes_tests.cc")
   AddTest(
     TARGET onnxruntime_hosting_tests
     SOURCES "${TEST_SRC_DIR}/hosting/test_main.cc" "${TEST_SRC_DIR}/hosting/http_routes_tests.cc"
