@@ -11,6 +11,7 @@ DEBIAN_FRONTEND=noninteractive
 
 apt-get update && apt-get install -y software-properties-common
 add-apt-repository ppa:deadsnakes/ppa
+add-apt-repository ppa:ubuntu-toolchain-r/test -y
 apt-get update && apt-get install -y --no-install-recommends \
         autotools-dev \
         build-essential \
@@ -38,7 +39,8 @@ apt-get update && apt-get install -y --no-install-recommends \
         unzip \
         zip \
         rsync libunwind8 libpng16-dev \
-        python3-setuptools python3-numpy python3-wheel python python3-pip python3-pytest
+        python3-setuptools python3-numpy python3-wheel python python3-pip python3-pytest \
+        g++-7
 
 locale-gen en_US.UTF-8
 update-locale LANG=en_US.UTF-8
