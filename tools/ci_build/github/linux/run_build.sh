@@ -25,7 +25,7 @@ if [ $BUILD_DEVICE = "gpu" ]; then
     /home/onnxruntimedev/Release/onnx_test_runner -e cuda /data/onnx
 else
     python3 $SCRIPT_DIR/../../build.py --build_dir /home/onnxruntimedev \
-        --config Debug Release --build_shared_lib \
+        --config Debug Release \
         --skip_submodule_sync  \
         --parallel --use_openmp $BUILD_EXTR_PAR
     /home/onnxruntimedev/Release/onnx_test_runner /data/onnx
