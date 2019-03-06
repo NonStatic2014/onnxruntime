@@ -10,4 +10,4 @@ jobs:
     - script: 'tools/ci_build/github/linux/run_dockerbuild.sh -o ubuntu16.04 -d cpu -r $(Build.BinariesDirectory) -x "--config Release --build_hosting --use_openmp"'
       displayName: 'Release Build'
 
-      - template: templates/clean-agent-build-directory-step.yml
+    - template: templates/clean-agent-build-directory-step.yml
