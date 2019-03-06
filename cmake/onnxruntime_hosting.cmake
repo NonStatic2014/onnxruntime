@@ -28,6 +28,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
         ${PROVIDERS_CUDA}
         ${onnxruntime_tvm_libs}
         ${onnxruntime_libs}
+        ${onnxruntime_EXTERNAL_LIBRARIES}
         onnxruntime_session
         onnxruntime_optimizer
         onnxruntime_providers
