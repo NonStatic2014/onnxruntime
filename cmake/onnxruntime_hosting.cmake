@@ -23,12 +23,16 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
         ${Boost_LIBRARIES}
+        ${PROVIDERS_MKLDNN}
+        ${MKLML_SHARED_LIB}
+        ${PROVIDERS_CUDA}
+        ${onnxruntime_tvm_libs}
+        ${onnxruntime_libs}
         onnxruntime_session
         onnxruntime_optimizer
         onnxruntime_providers
         onnxruntime_util
         onnxruntime_framework
-        onnxruntime_util
         onnxruntime_graph
         onnxruntime_common
         onnxruntime_mlas
