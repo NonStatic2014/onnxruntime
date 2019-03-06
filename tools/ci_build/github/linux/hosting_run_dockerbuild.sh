@@ -12,6 +12,7 @@ in
 o) BUILD_OS=${OPTARG};;
 #cpu, gpu
 d) BUILD_DEVICE=${OPTARG};;
+k) ACR_KEY=${OPTARG};;
 r) BUILD_DIR=${OPTARG};;
 #python version: 3.6 3.7 (absence means default 3.5)
 p) PYTHON_VER=${OPTARG};;
@@ -36,7 +37,10 @@ if [ $BUILD_DEVICE = "gpu" ]; then
     docker build -t "onnxruntime-$IMAGE" --build-arg BUILD_USER=onnxruntimedev --build-arg BUILD_UID=$(id -u) --build-arg PYTHON_VERSION=${PYTHON_VER} -f $DOCKER_FILE .
 else
     IMAGE="ubuntu16.04"
-    docker build -t "onnxruntime-$IMAGE" --build-arg BUILD_USER=onnxruntimedev --build-arg BUILD_UID=$(id -u) --build-arg OS_VERSION=16.04 --build-arg PYTHON_VERSION=${PYTHON_VER} -f Dockerfile.ubuntu .
+    # docker build -t "onnxruntime-$IMAGE" --build-arg BUILD_USER=onnxruntimedev --build-arg BUILD_UID=$(id -u) --build-arg OS_VERSION=16.04 --build-arg PYTHON_VERSION=${PYTHON_VER} -f Dockerfile.ubuntu .
+    docker login onnxhostingdev.azurecr.io -u onnxhostingdev -p ${ACR_KEY}
+    docker pull onnxhostingdev.azurecr.io/onnxruntime-ubuntu16.04:latest
+    docker tag onnxhostingdev.azurecr.io/onnxruntime-ubuntu16.04:latest onnxruntime-ubuntu16.04:latest
 fi
 
 set +e
