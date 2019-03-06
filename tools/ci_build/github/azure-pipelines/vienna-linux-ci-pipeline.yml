@@ -4,7 +4,10 @@ jobs:
   steps:
     - template: templates/set-test-data-variables-step.yml
 
-    - script: 'tools/ci_build/github/linux/run_dockerbuild.sh -o ubuntu16.04 -d cpu -r $(Build.BinariesDirectory) -x "--build_hosting --use_openmp"'
-      displayName: 'Command Line Script'
+    - script: 'tools/ci_build/github/linux/run_dockerbuild.sh -o ubuntu16.04 -d cpu -r $(Build.BinariesDirectory) -x "--config Debug --build_hosting --use_openmp"'
+      displayName: 'Debug Build'
 
-    - template: templates/clean-agent-build-directory-step.yml
+    - script: 'tools/ci_build/github/linux/run_dockerbuild.sh -o ubuntu16.04 -d cpu -r $(Build.BinariesDirectory) -x "--config Release --build_hosting --use_openmp"'
+      displayName: 'Release Build'
+
+      - template: templates/clean-agent-build-directory-step.yml
