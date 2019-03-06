@@ -5,7 +5,7 @@ SCRIPT_DIR="$( dirname "${BASH_SOURCE[0]}" )"
 SOURCE_ROOT=$(realpath $SCRIPT_DIR/../../../../)
 CUDA_VER=cuda10.0-cudnn7.3
 
-while getopts c:o:d:r:p:x: parameter_Option
+while getopts c:o:d:k:r:p:x: parameter_Option
 do case "${parameter_Option}"
 in
 #ubuntu16.04
