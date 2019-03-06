@@ -42,7 +42,7 @@ else
     docker pull onnxhostingdev.azurecr.io/onnxruntime-ubuntu16.04:latest
     docker tag onnxhostingdev.azurecr.io/onnxruntime-ubuntu16.04:latest onnxruntime-ubuntu16.04:latest
     docker images
-    id -u
+    id
 fi
 
 set +e
