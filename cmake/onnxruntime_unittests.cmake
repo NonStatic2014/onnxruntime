@@ -523,6 +523,7 @@ if (onnxruntime_BUILD_SHARED_LIB)
 endif()
 
 if (onnxruntime_BUILD_HOSTING)
+  find_package(Boost 1.69 COMPONENTS system context thread program_options REQUIRED)
   add_library(onnxruntime_test_utils_for_hosting ${onnxruntime_test_hosting_src})
   onnxruntime_add_include_to_target(onnxruntime_test_utils_for_hosting onnxruntime_test_utils gtest gsl onnx onnx_proto )
   add_dependencies(onnxruntime_test_utils_for_hosting onnxruntime_hosting ${onnxruntime_EXTERNAL_DEPENDENCIES})
