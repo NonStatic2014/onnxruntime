@@ -17,22 +17,19 @@ void do_something(const std::string& name, const std::string& version,
   auto noop = name + version + action + context.request.body();
 }
 
-void run_route(const std::regex& pattern, http::verb method, const std::vector<test_data>& data, bool does_validate_data);
+void run_route(const std::string& pattern, http::verb method, const std::vector<test_data>& data, bool does_validate_data);
 
 TEST(PositiveTests, RegisterTest) {
-  auto predict_regex = std::regex(
-      R"(/v1/models(?:/([^/:]+))(?:/versions/(\d+))?:(classify|regress|predict))");
+  auto predict_regex = R"(/v1/models(?:/([^/:]+))(?:/versions/(\d+))?:(classify|regress|predict))";
   Routes routes;
   EXPECT_TRUE(routes.register_controller(http::verb::post, predict_regex, do_something));
 
-  auto status_regex = std::regex(
-      R"(/v1/models(?:/([^/:]+))?(?:/versions/(\d+))?(?:\/(metadata))?)");
+  auto status_regex = R"(/v1/models(?:/([^/:]+))?(?:/versions/(\d+))?(?:\/(metadata))?)";
   EXPECT_TRUE(routes.register_controller(http::verb::get, status_regex, do_something));
 }
 
 TEST(PositiveTests, PostRouteTest) {
-  auto predict_regex = std::regex(
-      R"(/v1/models(?:/([^/:]+))(?:/versions/(\d+))?:(classify|regress|predict))");
+  auto predict_regex = R"(/v1/models(?:/([^/:]+))(?:/versions/(\d+))?:(classify|regress|predict))";
 
   std::vector<test_data> actions{
       std::make_tuple(http::verb::post, "/v1/models/abc/versions/23:predict", "abc", "23", "predict", http::status::ok),
@@ -44,8 +41,7 @@ TEST(PositiveTests, PostRouteTest) {
 }
 
 TEST(NegativeTests, PostRouteInvalidURLTest) {
-  auto predict_regex = std::regex(
-      R"(/v1/models(?:/([^/:]+))(?:/versions/(\d+))?:(classify|regress|predict))");
+  auto predict_regex = R"(/v1/models(?:/([^/:]+))(?:/versions/(\d+))?:(classify|regress|predict))";
 
   std::vector<test_data> actions{
       std::make_tuple(http::verb::post, "/v1/models", "", "", "", http::status::not_found),
@@ -59,8 +55,7 @@ TEST(NegativeTests, PostRouteInvalidURLTest) {
 }
 
 TEST(NegativeTests, PostRouteInvalidMethodTest) {
-  auto predict_regex = std::regex(
-      R"(/v1/models(?:/([^/:]+))(?:/versions/(\d+))?:(classify|regress|predict))");
+  auto predict_regex = R"(/v1/models(?:/([^/:]+))(?:/versions/(\d+))?:(classify|regress|predict))";
 
   std::vector<test_data> actions{
       std::make_tuple(http::verb::get, "/v1/models/abc/versions/23:predict", "abc", "23", "predict", http::status::method_not_allowed)};
@@ -68,7 +63,7 @@ TEST(NegativeTests, PostRouteInvalidMethodTest) {
   run_route(predict_regex, http::verb::post, actions, false);
 }
 
-void run_route(const std::regex& pattern, http::verb method, const std::vector<test_data>& data, bool does_validate_data) {
+void run_route(const std::string& pattern, http::verb method, const std::vector<test_data>& data, bool does_validate_data) {
   Routes routes;
   EXPECT_TRUE(routes.register_controller(method, pattern, do_something));
 
