@@ -20,6 +20,7 @@ namespace beast = boost::beast;    // from <boost/beast.hpp>
 using tcp = boost::asio::ip::tcp;  // from <boost/asio/ip/tcp.hpp>
 
 namespace onnxruntime {
+namespace hosting {
 
 using handler_fn = std::function<void(std::string, std::string, std::string, HttpContext&)>;
 
@@ -152,6 +153,7 @@ class HttpSession : public std::enable_shared_from_this<HttpSession> {
   }
 };
 
-}  // namespace onnxruntime
+} // namespace hosting
+} // namespace onnxruntime
 
 #endif  //BEAST_SERVER_HTTP_SESSION_H

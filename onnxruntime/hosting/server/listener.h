@@ -14,6 +14,7 @@ namespace net = boost::asio;       // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;  // from <boost/asio/ip/tcp.hpp>
 
 namespace onnxruntime {
+namespace hosting {
 
 // Listens on a socket and creates an HTTP session
 class Listener : public std::enable_shared_from_this<Listener> {
@@ -87,6 +88,7 @@ class Listener : public std::enable_shared_from_this<Listener> {
   }
 };
 
-}  // namespace onnxruntime
+} // namespace hosting
+} // namespace onnxruntime
 
 #endif  //BEAST_SERVER_LISTENER_H

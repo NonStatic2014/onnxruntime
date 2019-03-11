@@ -4,9 +4,10 @@
 #include <iostream>
 
 #include "gtest/gtest.h"
-#include "hosting/include/routes.h"
+#include "hosting/server/routes.h"
 
 namespace onnxruntime {
+namespace hosting {
 namespace test {
 
 using handler_fn = std::function<void(std::string, std::string, std::string, HttpContext&)>;
@@ -105,4 +106,5 @@ void run_route(const std::string& pattern, http::verb method, const std::vector<
 }
 
 } // namespace test
+} // namespace hosting
 } // namespace onnxruntime

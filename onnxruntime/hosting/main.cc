@@ -9,7 +9,7 @@
 namespace po = boost::program_options;
 
 void test_request(const std::string& name, const std::string& version,
-                  const std::string& action, onnxruntime::HttpContext& context) {
+                  const std::string& action, onnxruntime::hosting::HttpContext& context) {
   std::stringstream ss;
 
   ss << "\tModel Name: " << name << std::endl;
@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
 
   auto const boost_address = boost::asio::ip::make_address(vm["address"].as<std::string>());
 
-  onnxruntime::App app {};
+  onnxruntime::hosting::App app {};
   app.Post(R"(/v1/models/([^/:]+)(?:/versions/(\d+))?:(classify|regress|predict))", test_request)
      .Bind(boost_address, vm["port"].as<int>())
      .NumThreads(vm["threads"].as<int>())

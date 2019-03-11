@@ -12,6 +12,7 @@
 namespace http = boost::beast::http;  // from <boost/beast/http.hpp>
 
 namespace onnxruntime {
+namespace hosting {
 
 using handler_fn = std::function<void(std::string, std::string, std::string, HttpContext&)>;
 
@@ -80,6 +81,7 @@ class Routes {
   std::vector<std::pair<std::string, handler_fn>> get_fn_table;
 };
 
-}  // namespace onnxruntime
+} //namespace hosting
+} // namespace onnxruntime
 
 #endif  //BEAST_SERVER_ROUTES_H

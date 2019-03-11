@@ -22,6 +22,7 @@ namespace net = boost::asio;       // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;  // from <boost/asio/ip/tcp.hpp>
 
 namespace onnxruntime {
+namespace hosting {
 
 using handler_fn = std::function<void(std::string, std::string, std::string, HttpContext&)>;
 
@@ -82,6 +83,7 @@ class App {
   int threads_;
 };
 
-}  // namespace onnxruntime
+} // namespace hosting
+} // namespace onnxruntime
 
 #endif  //BEAST_HTTP_H

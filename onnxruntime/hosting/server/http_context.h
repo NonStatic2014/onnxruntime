@@ -9,6 +9,7 @@
 namespace http = boost::beast::http;  // from <boost/beast/http.hpp>
 
 namespace onnxruntime {
+namespace hosting {
 
 // This class represents the HTTP context given to the user
 // Currently, we are just giving the Boost request and response object
@@ -21,6 +22,7 @@ class HttpContext {
   HttpContext() = default;
 };
 
-}  // namespace onnxruntime
+} // namespace hosting
+} // namespace onnxruntime
 
 #endif  //BEAST_SERVER_HTTP_CONTEXT_H
