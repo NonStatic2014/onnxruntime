@@ -69,11 +69,11 @@ int main(int argc, char* argv[]) {
 
   auto const boost_address = boost::asio::ip::make_address(vm["address"].as<std::string>());
 
-  onnxruntime::App app{};
-  app.post(R"(/v1/models/([^/:]+)(?:/versions/(\d+))?:(classify|regress|predict))", test_request)
-      .bind(boost_address, vm["port"].as<int>())
-      .num_threads(vm["threads"].as<int>())
-      .run();
+  onnxruntime::App app {};
+  app.Post(R"(/v1/models/([^/:]+)(?:/versions/(\d+))?:(classify|regress|predict))", test_request)
+     .Bind(boost_address, vm["port"].as<int>())
+     .NumThreads(vm["threads"].as<int>())
+     .Run();
 
   return EXIT_SUCCESS;
 }

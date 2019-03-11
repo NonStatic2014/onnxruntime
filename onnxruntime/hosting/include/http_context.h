@@ -18,6 +18,6 @@ class HttpContext {
   HttpContext() = default;
 };
 
-} // namespace onnxruntime
+}  // namespace onnxruntime
 
 #endif  //BEAST_SERVER_HTTP_CONTEXT_H

@@ -28,21 +28,21 @@ class Listener : public std::enable_shared_from_this<Listener> {
     // Open the acceptor
     acceptor_.open(endpoint.protocol(), ec);
     if (ec) {
-        ErrorHandling(ec, "open");
+      ErrorHandling(ec, "open");
       return;
     }
 
     // Allow address reuse
     acceptor_.set_option(net::socket_base::reuse_address(true), ec);
     if (ec) {
-        ErrorHandling(ec, "set_option");
+      ErrorHandling(ec, "set_option");
       return;
     }
 
     // Bind to the routes address
     acceptor_.bind(endpoint, ec);
     if (ec) {
-        ErrorHandling(ec, "bind");
+      ErrorHandling(ec, "bind");
       return;
     }
 
@@ -50,7 +50,7 @@ class Listener : public std::enable_shared_from_this<Listener> {
     acceptor_.listen(
         net::socket_base::max_listen_connections, ec);
     if (ec) {
-        ErrorHandling(ec, "listen");
+      ErrorHandling(ec, "listen");
       return;
     }
   }
@@ -60,34 +60,34 @@ class Listener : public std::enable_shared_from_this<Listener> {
     if (!acceptor_.is_open()) {
       return;
     }
-      DoAccept();
+    DoAccept();
   }
 
   void DoAccept() {
     acceptor_.async_accept(
         socket_,
         std::bind(
-                &Listener::OnAccept,
+            &Listener::OnAccept,
             shared_from_this(),
             std::placeholders::_1));
   }
 
   void OnAccept(beast::error_code ec) {
     if (ec) {
-        ErrorHandling(ec, "accept");
+      ErrorHandling(ec, "accept");
     } else {
       // Create the session and run it
-        std::make_shared<HttpSession>(
-                routes_,
-                std::move(socket_))
-                ->Run();
+      std::make_shared<HttpSession>(
+          routes_,
+          std::move(socket_))
+          ->Run();
     }
 
     // Accept another connection
-      DoAccept();
+    DoAccept();
   }
 };
 
-} // namespace onnxruntime
+}  // namespace onnxruntime
 
 #endif  //BEAST_SERVER_LISTENER_H
