@@ -153,7 +153,7 @@ class HttpSession : public std::enable_shared_from_this<HttpSession> {
   }
 };
 
-} // namespace hosting
-} // namespace onnxruntime
+}  // namespace hosting
+}  // namespace onnxruntime
 
 #endif  //BEAST_SERVER_HTTP_SESSION_H

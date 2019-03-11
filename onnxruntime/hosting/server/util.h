@@ -16,6 +16,6 @@ void ErrorHandling(beast::error_code ec, char const* what) {
   std::cerr << what << ": " << ec.message() << "\n";
 }
 
-} // namespace hosting
-} // namespace onnxruntime
+}  // namespace hosting
+}  // namespace onnxruntime
 #endif  //BEAST_SERVER_UTIL_H

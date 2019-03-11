@@ -88,7 +88,7 @@ class Listener : public std::enable_shared_from_this<Listener> {
   }
 };
 
-} // namespace hosting
-} // namespace onnxruntime
+}  // namespace hosting
+}  // namespace onnxruntime
 
 #endif  //BEAST_SERVER_LISTENER_H

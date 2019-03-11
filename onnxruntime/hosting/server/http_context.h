@@ -22,7 +22,7 @@ class HttpContext {
   HttpContext() = default;
 };
 
-} // namespace hosting
-} // namespace onnxruntime
+}  // namespace hosting
+}  // namespace onnxruntime
 
 #endif  //BEAST_SERVER_HTTP_CONTEXT_H

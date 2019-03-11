@@ -83,7 +83,7 @@ class App {
   int threads_;
 };
 
-} // namespace hosting
-} // namespace onnxruntime
+}  // namespace hosting
+}  // namespace onnxruntime
 
 #endif  //BEAST_HTTP_H

@@ -81,7 +81,7 @@ class Routes {
   std::vector<std::pair<std::string, handler_fn>> get_fn_table;
 };
 
-} //namespace hosting
-} // namespace onnxruntime
+}  //namespace hosting
+}  // namespace onnxruntime
 
 #endif  //BEAST_SERVER_ROUTES_H
