@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+#ifndef BEAST_HTTP_H
+#define BEAST_HTTP_H
+
 #include <functional>
 #include <iostream>
 #include <memory>
@@ -20,7 +23,7 @@ using tcp = boost::asio::ip::tcp;  // from <boost/asio/ip/tcp.hpp>
 
 namespace onnxruntime {
 
-using handler_fn = std::function<void(std::string, std::string, std::string, Http_Context&)>;
+using handler_fn = std::function<void(std::string, std::string, std::string, HttpContext&)>;
 
 // Accepts incoming connections and launches the sessions
 class App {
@@ -45,14 +48,14 @@ class App {
 
   App& post(const std::string& route, handler_fn fn) {
     //    routes->http_posts[route] = std::move(fn);
-    routes->register_controller(http::verb::post, route, fn);
+      routes->RegisterController(http::verb::post, route, fn);
     return *this;
   }
 
   App& run() {
     net::io_context ioc{threads_};
     // Create and launch a listening port
-    std::make_shared<listener>(routes, ioc, tcp::endpoint{address_, port_})->run();
+    std::make_shared<Listener>(routes, ioc, tcp::endpoint{address_, port_})->Run();
 
     // TODO: use logger
     std::cout << "Listening at: \n"
@@ -81,4 +84,5 @@ class App {
 
 } // namespace onnxruntime
 
+#endif  //BEAST_HTTP_H
 

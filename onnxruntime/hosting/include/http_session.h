@@ -21,9 +21,9 @@ using tcp = boost::asio::ip::tcp;  // from <boost/asio/ip/tcp.hpp>
 
 namespace onnxruntime {
 
-using handler_fn = std::function<void(std::string, std::string, std::string, Http_Context&)>;
+using handler_fn = std::function<void(std::string, std::string, std::string, HttpContext&)>;
 
-class http_session : public std::enable_shared_from_this<http_session> {
+class HttpSession : public std::enable_shared_from_this<HttpSession> {
  private:
   const std::shared_ptr<Routes> routes_;
   tcp::socket socket_;
@@ -33,14 +33,14 @@ class http_session : public std::enable_shared_from_this<http_session> {
   std::shared_ptr<void> res_{nullptr};
 
  public:
-  explicit http_session(
+  explicit HttpSession(
       std::shared_ptr<Routes> routes,
       tcp::socket socket)
       : routes_(std::move(routes)), socket_(std::move(socket)), strand_(socket_.get_executor()) {
   }
 
   template <class Msg>
-  void send(Msg&& msg) {
+  void Send(Msg &&msg) {
     using item_type = std::remove_reference_t<decltype(msg)>;
 
     auto ptr = std::make_shared<item_type>(std::move(msg));
@@ -50,13 +50,13 @@ class http_session : public std::enable_shared_from_this<http_session> {
     http::async_write(self_->socket_, *ptr,
                       net::bind_executor(strand_,
                                          [self_, close = ptr->need_eof()](beast::error_code ec, std::size_t bytes) {
-                                           self_->on_write(ec, bytes, close);
+                                             self_->OnWrite(ec, bytes, close);
                                          }));
   }
 
   template <typename Body, typename Allocator>
-  void handle_request(http::request<Body, http::basic_fields<Allocator>>&& req) {
-    Http_Context context{};
+  void HandleRequest(http::request<Body, http::basic_fields<Allocator>> &&req) {
+    HttpContext context{};
     context.request = req;
 
     std::string path = req.target().to_string();
@@ -64,7 +64,7 @@ class http_session : public std::enable_shared_from_this<http_session> {
     std::string model_version;
     std::string action;
     handler_fn func;
-    http::status status = routes_->parse_url(req.method(), path, model_name, model_version, action, func);
+    http::status status = routes_->ParseUrl(req.method(), path, model_name, model_version, action, func);
 
     if (http::status::ok == status) {
       func(model_name, model_version, action, context);
@@ -78,15 +78,15 @@ class http_session : public std::enable_shared_from_this<http_session> {
       context.response = res;
     }
 
-    return send(std::move(context.response));
+    return Send(std::move(context.response));
   }
 
   // Start the asynchronous operation
-  void run() {
-    do_read();
+  void Run() {
+    DoRead();
   }
 
-  void do_read() {
+  void DoRead() {
     // Make the request empty before reading,
     // otherwise the operation behavior is undefined.
     req_ = {};
@@ -96,7 +96,7 @@ class http_session : public std::enable_shared_from_this<http_session> {
                      net::bind_executor(
                          strand_,
                          std::bind(
-                             &http_session::on_read,
+                             &HttpSession::on_read,
                              shared_from_this(),
                              std::placeholders::_1,
                              std::placeholders::_2)));
@@ -109,43 +109,43 @@ class http_session : public std::enable_shared_from_this<http_session> {
 
     // This means they closed the connection
     if (ec == http::error::end_of_stream) {
-      return do_close();
+      return DoClose();
     }
 
     if (ec) {
-      error_handling(ec, "read");
+      ErrorHandling(ec, "read");
       return;
     }
 
     // Send the response
-    handle_request(std::move(req_));
+    HandleRequest(std::move(req_));
   }
 
-  void on_write(
-      beast::error_code ec,
-      std::size_t bytes_transferred,
-      bool close) {
+  void OnWrite(
+          beast::error_code ec,
+          std::size_t bytes_transferred,
+          bool close) {
     boost::ignore_unused(bytes_transferred);
 
     if (ec) {
-      error_handling(ec, "write");
+      ErrorHandling(ec, "write");
       return;
     }
 
     if (close) {
       // This means we should close the connection, usually because
       // the response indicated the "Connection: close" semantic.
-      return do_close();
+      return DoClose();
     }
 
     // We're done with the response so delete it
     res_ = nullptr;
 
     // Read another request
-    do_read();
+    DoRead();
   }
 
-  void do_close() {
+  void DoClose() {
     // Send a TCP shutdown
     beast::error_code ec;
     socket_.shutdown(tcp::socket::shutdown_send, ec);

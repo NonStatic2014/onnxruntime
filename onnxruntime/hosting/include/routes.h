@@ -4,23 +4,23 @@
 #ifndef BEAST_SERVER_ROUTES_H
 #define BEAST_SERVER_ROUTES_H
 
-#include <vector>
-#include <boost/beast/http.hpp>
 #include "re2/re2.h"
+#include <boost/beast/http.hpp>
+
 #include "http_context.h"
 
 namespace http = boost::beast::http;  // from <boost/beast/http.hpp>
 
 namespace onnxruntime {
 
-using handler_fn = std::function<void(std::string, std::string, std::string, Http_Context&)>;
+using handler_fn = std::function<void(std::string, std::string, std::string, HttpContext&)>;
 
 // This class maintains two lists of regex -> function lists. One for POST requests and one for GET requests
 // If the incoming URL could match more than one regex, the first one will win.
 class Routes {
  public:
   Routes() = default;
-  bool register_controller(http::verb method, const std::string& url_pattern, const handler_fn& controller) {
+  bool RegisterController(http::verb method, const std::string &url_pattern, const handler_fn &controller) {
     switch(method)
     {
       case http::verb::get:
@@ -34,12 +34,12 @@ class Routes {
     }
   }
 
-  http::status parse_url(http::verb method,
-                         const std::string& url,
-                         /* out */ std::string& model_name,
-                         /* out */ std::string& model_version,
-                         /* out */ std::string& action,
-                         /* out */ handler_fn& func) {
+  http::status ParseUrl(http::verb method,
+                        const std::string &url,
+          /* out */ std::string &model_name,
+          /* out */ std::string &model_version,
+          /* out */ std::string &action,
+          /* out */ handler_fn &func) {
     std::vector<std::pair<std::string, handler_fn>> func_table;
     switch(method)
     {

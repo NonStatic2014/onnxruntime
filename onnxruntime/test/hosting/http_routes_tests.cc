@@ -9,11 +9,11 @@
 namespace onnxruntime {
 namespace test {
 
-using handler_fn = std::function<void(std::string, std::string, std::string, Http_Context&)>;
+using handler_fn = std::function<void(std::string, std::string, std::string, HttpContext&)>;
 using test_data = std::tuple<http::verb, std::string, std::string, std::string, std::string, http::status>;
 
 void do_something(const std::string& name, const std::string& version,
-                  const std::string& action, Http_Context& context) {
+                  const std::string& action, HttpContext& context) {
   auto noop = name + version + action + context.request.body();
 }
 
@@ -22,10 +22,10 @@ void run_route(const std::string& pattern, http::verb method, const std::vector<
 TEST(PositiveTests, RegisterTest) {
   auto predict_regex = R"(/v1/models/([^/:]+)(?:/versions/(\d+))?:(classify|regress|predict))";
   Routes routes;
-  EXPECT_TRUE(routes.register_controller(http::verb::post, predict_regex, do_something));
+  EXPECT_TRUE(routes.RegisterController(http::verb::post, predict_regex, do_something));
 
   auto status_regex = R"(/v1/models(?:/([^/:]+))?(?:/versions/(\d+))?(?:\/(metadata))?)";
-  EXPECT_TRUE(routes.register_controller(http::verb::get, status_regex, do_something));
+  EXPECT_TRUE(routes.RegisterController(http::verb::get, status_regex, do_something));
 }
 
 TEST(PositiveTests, PostRouteTest) {
@@ -79,7 +79,7 @@ TEST(NegativeTests, PostRouteInvalidMethodTest) {
 
 void run_route(const std::string& pattern, http::verb method, const std::vector<test_data>& data, bool does_validate_data) {
   Routes routes;
-  EXPECT_TRUE(routes.register_controller(method, pattern, do_something));
+  EXPECT_TRUE(routes.RegisterController(method, pattern, do_something));
 
   for (const auto& i : data) {
     http::verb test_method;
@@ -95,7 +95,7 @@ void run_route(const std::string& pattern, http::verb method, const std::vector<
     http::status expected_status;
 
     std::tie(test_method, url_string, expected_name, expected_version, expected_action, expected_status) = i;
-    EXPECT_EQ(expected_status, routes.parse_url(test_method, url_string, name, version, action, fn));
+    EXPECT_EQ(expected_status, routes.ParseUrl(test_method, url_string, name, version, action, fn));
     if (does_validate_data) {
       EXPECT_EQ(name, expected_name);
       EXPECT_EQ(version, expected_version);

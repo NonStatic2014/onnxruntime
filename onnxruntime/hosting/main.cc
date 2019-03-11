@@ -1,15 +1,15 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-#include <iostream>
-#include "beast_http.h"
 #include "boost/program_options.hpp"
+
+#include "beast_http.h"
 #include "core/session/inference_session.h"
 
 namespace po = boost::program_options;
 
 void test_request(const std::string& name, const std::string& version,
-                  const std::string& action, onnxruntime::Http_Context& context) {
+                  const std::string& action, onnxruntime::HttpContext& context) {
   std::stringstream ss;
 
   ss << "\tModel Name: " << name << std::endl;
