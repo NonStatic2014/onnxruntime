@@ -23,6 +23,8 @@ namespace onnxruntime {
 
 using handler_fn = std::function<void(std::string, std::string, std::string, HttpContext&)>;
 
+// An implementation of a single (per request) HTTP session
+// Used by a listener to hand off the work and async write back to a socket
 class HttpSession : public std::enable_shared_from_this<HttpSession> {
  private:
   const std::shared_ptr<Routes> routes_;
@@ -54,6 +56,7 @@ class HttpSession : public std::enable_shared_from_this<HttpSession> {
                                          }));
   }
 
+  // Handle the request and hand it off to the user's function
   template <typename Body, typename Allocator>
   void HandleRequest(http::request<Body, http::basic_fields<Allocator>>&& req) {
     HttpContext context{};
@@ -102,9 +105,7 @@ class HttpSession : public std::enable_shared_from_this<HttpSession> {
                              std::placeholders::_2)));
   }
 
-  void on_read(
-      beast::error_code ec,
-      std::size_t bytes_transferred) {
+  void on_read(beast::error_code ec, std::size_t bytes_transferred) {
     boost::ignore_unused(bytes_transferred);
 
     // This means they closed the connection
@@ -121,10 +122,7 @@ class HttpSession : public std::enable_shared_from_this<HttpSession> {
     HandleRequest(std::move(req_));
   }
 
-  void OnWrite(
-      beast::error_code ec,
-      std::size_t bytes_transferred,
-      bool close) {
+  void OnWrite(beast::error_code ec, std::size_t bytes_transferred, bool close) {
     boost::ignore_unused(bytes_transferred);
 
     if (ec) {

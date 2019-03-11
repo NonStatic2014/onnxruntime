@@ -15,6 +15,7 @@ using tcp = boost::asio::ip::tcp;  // from <boost/asio/ip/tcp.hpp>
 
 namespace onnxruntime {
 
+// Listens on a socket and creates an HTTP session
 class Listener : public std::enable_shared_from_this<Listener> {
   const std::shared_ptr<Routes> routes_;
   tcp::acceptor acceptor_;
@@ -63,6 +64,7 @@ class Listener : public std::enable_shared_from_this<Listener> {
     DoAccept();
   }
 
+  // Asynchronously accepts the socket
   void DoAccept() {
     acceptor_.async_accept(
         socket_,
@@ -72,15 +74,12 @@ class Listener : public std::enable_shared_from_this<Listener> {
             std::placeholders::_1));
   }
 
+  // Creates the HTTP session and runs it
   void OnAccept(beast::error_code ec) {
     if (ec) {
       ErrorHandling(ec, "accept");
     } else {
-      // Create the session and run it
-      std::make_shared<HttpSession>(
-          routes_,
-          std::move(socket_))
-          ->Run();
+      std::make_shared<HttpSession>(routes_, std::move(socket_))->Run();
     }
 
     // Accept another connection

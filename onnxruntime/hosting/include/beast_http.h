@@ -26,6 +26,7 @@ namespace onnxruntime {
 using handler_fn = std::function<void(std::string, std::string, std::string, HttpContext&)>;
 
 // Accepts incoming connections and launches the sessions
+// Each method returns the app itself so methods can be chained
 class App {
  public:
   App() {
