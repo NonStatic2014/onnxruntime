@@ -10,11 +10,11 @@
 #include "routes.h"
 #include "util.h"
 
-namespace net = boost::asio;       // from <boost/asio.hpp>
-using tcp = boost::asio::ip::tcp;  // from <boost/asio/ip/tcp.hpp>
-
 namespace onnxruntime {
 namespace hosting {
+
+namespace net = boost::asio;       // from <boost/asio.hpp>
+using tcp = boost::asio::ip::tcp;  // from <boost/asio/ip/tcp.hpp>
 
 // Listens on a socket and creates an HTTP session
 class Listener : public std::enable_shared_from_this<Listener> {

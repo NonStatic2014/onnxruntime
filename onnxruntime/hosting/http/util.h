@@ -6,10 +6,10 @@
 
 #include <boost/beast/core.hpp>
 
-namespace beast = boost::beast;  // from <boost/beast.hpp>
-
 namespace onnxruntime {
 namespace hosting {
+
+namespace beast = boost::beast;  // from <boost/beast.hpp>
 
 // Report a failure
 void ErrorHandling(beast::error_code ec, char const* what) {

@@ -7,6 +7,8 @@
 #include "core/session/inference_session.h"
 
 namespace po = boost::program_options;
+namespace beast = boost::beast;
+namespace http = beast::http;
 
 void test_request(const std::string& name, const std::string& version,
                   const std::string& action, onnxruntime::hosting::HttpContext& context) {

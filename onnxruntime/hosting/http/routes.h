@@ -9,10 +9,10 @@
 
 #include "http_context.h"
 
-namespace http = boost::beast::http;  // from <boost/beast/http.hpp>
-
 namespace onnxruntime {
 namespace hosting {
+
+namespace http = boost::beast::http;  // from <boost/beast/http.hpp>
 
 using handler_fn = std::function<void(std::string, std::string, std::string, HttpContext&)>;
 
