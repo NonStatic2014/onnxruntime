@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-#ifndef BEAST_SERVER_LISTENER_H
-#define BEAST_SERVER_LISTENER_H
+#ifndef ONNXRUNTIME_HOSTING_HTTP_LISTENER_H
+#define ONNXRUNTIME_HOSTING_HTTP_LISTENER_H
 
 #include <memory>
 
@@ -91,4 +91,4 @@ class Listener : public std::enable_shared_from_this<Listener> {
 }  // namespace hosting
 }  // namespace onnxruntime
 
-#endif  //BEAST_SERVER_LISTENER_H
+#endif  // ONNXRUNTIME_HOSTING_HTTP_LISTENER_H

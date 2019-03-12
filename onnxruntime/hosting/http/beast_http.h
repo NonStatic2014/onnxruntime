@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-#ifndef BEAST_SERVER_HTTP_HOSTING_H
-#define BEAST_SERVER_HTTP_HOSTING_H
+#ifndef ONNXRUNTIME_HOSTING_HTTP_BEAST_HTTP_H
+#define ONNXRUNTIME_HOSTING_HTTP_BEAST_HTTP_H
 
 #include <functional>
 #include <iostream>
@@ -86,4 +86,4 @@ class App {
 }  // namespace hosting
 }  // namespace onnxruntime
 
-#endif  //BEAST_HTTP_H
+#endif  // ONNXRUNTIME_HOSTING_HTTP_BEAST_HTTP_H

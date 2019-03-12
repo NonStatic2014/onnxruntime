@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-#ifndef BEAST_SERVER_ROUTES_H
-#define BEAST_SERVER_ROUTES_H
+#ifndef ONNXRUNTIME_HOSTING_HTTP_ROUTES_H
+#define ONNXRUNTIME_HOSTING_HTTP_ROUTES_H
 
 #include "re2/re2.h"
 #include <boost/beast/http.hpp>
@@ -84,4 +84,4 @@ class Routes {
 }  //namespace hosting
 }  // namespace onnxruntime
 
-#endif  //BEAST_SERVER_ROUTES_H
+#endif  // ONNXRUNTIME_HOSTING_HTTP_ROUTES_H

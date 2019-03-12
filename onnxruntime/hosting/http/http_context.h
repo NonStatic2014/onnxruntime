@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-#ifndef BEAST_SERVER_HTTP_CONTEXT_H
-#define BEAST_SERVER_HTTP_CONTEXT_H
+#ifndef ONNXRUNTIME_HOSTING_HTTP_HTTP_CONTEXT_H
+#define ONNXRUNTIME_HOSTING_HTTP_HTTP_CONTEXT_H
 
 #include <boost/beast/http.hpp>
 
@@ -25,4 +25,4 @@ class HttpContext {
 }  // namespace hosting
 }  // namespace onnxruntime
 
-#endif  //BEAST_SERVER_HTTP_CONTEXT_H
+#endif  // ONNXRUNTIME_HOSTING_HTTP_HTTP_CONTEXT_H

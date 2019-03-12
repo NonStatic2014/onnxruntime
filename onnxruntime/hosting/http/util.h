@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-#ifndef BEAST_SERVER_UTIL_H
-#define BEAST_SERVER_UTIL_H
+#ifndef ONNXRUNTIME_HOSTING_HTTP_UTIL_H
+#define ONNXRUNTIME_HOSTING_HTTP_UTIL_H
 
 #include <boost/beast/core.hpp>
 
@@ -18,4 +18,5 @@ void ErrorHandling(beast::error_code ec, char const* what) {
 
 }  // namespace hosting
 }  // namespace onnxruntime
-#endif  //BEAST_SERVER_UTIL_H
+
+#endif  // ONNXRUNTIME_HOSTING_HTTP_UTIL_H
