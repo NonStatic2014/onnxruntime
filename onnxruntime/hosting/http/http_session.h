@@ -24,9 +24,22 @@ namespace hosting {
 
 using handler_fn = std::function<void(std::string, std::string, std::string, HttpContext&)>;
 
-// An implementation of a single (per request) HTTP session
+// An implementation of a single HTTP session
 // Used by a listener to hand off the work and async write back to a socket
 class HttpSession : public std::enable_shared_from_this<HttpSession> {
+ public:
+  explicit HttpSession(
+      std::shared_ptr<Routes> routes,
+      tcp::socket socket)
+      : routes_(std::move(routes)), socket_(std::move(socket)), strand_(socket_.get_executor()) {
+  }
+
+  // Start the asynchronous operation
+  // The entrypoint for the class
+  void Run() {
+    DoRead();
+  }
+
  private:
   const std::shared_ptr<Routes> routes_;
   tcp::socket socket_;
@@ -35,13 +48,9 @@ class HttpSession : public std::enable_shared_from_this<HttpSession> {
   http::request<http::string_body> req_;
   std::shared_ptr<void> res_{nullptr};
 
- public:
-  explicit HttpSession(
-      std::shared_ptr<Routes> routes,
-      tcp::socket socket)
-      : routes_(std::move(routes)), socket_(std::move(socket)), strand_(socket_.get_executor()) {
-  }
-
+  // Writes the message asynchronously back to the socket
+  // Stores the pointer to the message and the class itself so that
+  // They do not get destructed before the async process is finished
   template <class Msg>
   void Send(Msg&& msg) {
     using item_type = std::remove_reference_t<decltype(msg)>;
@@ -58,6 +67,8 @@ class HttpSession : public std::enable_shared_from_this<HttpSession> {
   }
 
   // Handle the request and hand it off to the user's function
+  // Called after the session is finished reading the message
+  // Should set the response before calling Send
   template <typename Body, typename Allocator>
   void HandleRequest(http::request<Body, http::basic_fields<Allocator>>&& req) {
     HttpContext context{};
@@ -85,28 +96,24 @@ class HttpSession : public std::enable_shared_from_this<HttpSession> {
     return Send(std::move(context.response));
   }
 
-  // Start the asynchronous operation
-  void Run() {
-    DoRead();
-  }
-
+  // Asynchronously reads the request from the socket
   void DoRead() {
     // Make the request empty before reading,
     // otherwise the operation behavior is undefined.
     req_ = {};
 
-    // Read a request
     http::async_read(socket_, buffer_, req_,
                      net::bind_executor(
                          strand_,
                          std::bind(
-                             &HttpSession::on_read,
+                             &HttpSession::OnRead,
                              shared_from_this(),
                              std::placeholders::_1,
                              std::placeholders::_2)));
   }
 
-  void on_read(beast::error_code ec, std::size_t bytes_transferred) {
+  // Perform error checking before handing off to HandleRequest
+  void OnRead(beast::error_code ec, std::size_t bytes_transferred) {
     boost::ignore_unused(bytes_transferred);
 
     // This means they closed the connection
@@ -123,6 +130,7 @@ class HttpSession : public std::enable_shared_from_this<HttpSession> {
     HandleRequest(std::move(req_));
   }
 
+  // After writing, make the session read another request
   void OnWrite(beast::error_code ec, std::size_t bytes_transferred, bool close) {
     boost::ignore_unused(bytes_transferred);
 
