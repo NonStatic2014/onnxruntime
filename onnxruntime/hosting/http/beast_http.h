@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-#ifndef BEAST_HTTP_H
-#define BEAST_HTTP_H
+#ifndef BEAST_SERVER_HTTP_HOSTING_H
+#define BEAST_SERVER_HTTP_HOSTING_H
 
 #include <functional>
 #include <iostream>
