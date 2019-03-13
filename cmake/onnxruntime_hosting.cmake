@@ -38,7 +38,6 @@ endif()
 
 file(GLOB_RECURSE onnxruntime_hosting_srcs
   "${ONNXRUNTIME_ROOT}/hosting/main.cc"
-  "${ONNXRUNTIME_ROOT}/hosting/server_configuration.cc"
 )
 
 # For IDE only
