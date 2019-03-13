@@ -13,11 +13,7 @@ namespace po = boost::program_options;
 
 class ServerConfiguration {
  public:
-  ServerConfiguration() {
-    full_desc = "ONNX Hosting: host an ONNX model for inferencing with ONNXRuntime";
-    desc.add_options()("help,h", "Shows a help message and exits")("address,a", po::value(&address), "The base HTTP address")("port,p", po::value(&port), "HTTP port to listen to requests")("threads,t", po::value(&threads), "Number of http threads")("model_path,m", po::value(&model_path), "Path of the model file");
-  }
-
+  ServerConfiguration();
   void ParseInput(int argc_, char** argv);
 
   std::string full_desc;
