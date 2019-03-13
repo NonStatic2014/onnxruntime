@@ -2,9 +2,10 @@
 // Licensed under the MIT License.
 
 #include "boost/program_options.hpp"
+#include "core/session/inference_session.h"
 
 #include "beast_http.h"
-#include "core/session/inference_session.h"
+#include "server_configuration.h"
 
 namespace po = boost::program_options;
 namespace beast = boost::beast;
@@ -29,23 +30,20 @@ void test_request(const std::string& name, const std::string& version,
 }
 
 int main(int argc, char* argv[]) {
-  // TODO: create configuration class for all config related params
-  std::string model_path;
-  std::string address;
-  int port;
-  int threads;
+  onnxruntime::hosting::ServerConfiguration config {};
 
   po::options_description desc("Allowed options");
   desc.add_options()
   ("help,h", "Print a help message")
-  ("address,a", po::value(&address), "The base HTTP address")
-  ("port,p", po::value(&port), "HTTP port to listen to requests")
-  ("threads,t", po::value(&threads), "Number of http threads")
-  ("model_path,m", po::value(&model_path), "Path of the model file");
+  ("address,a", po::value(&config.address), "The base HTTP address")
+  ("port,p", po::value(&config.port), "HTTP port to listen to requests")
+  ("threads,t", po::value(&config.threads), "Number of http threads")
+  ("model_path,m", po::value(&config.model_path), "Path of the model file");
 
   po::variables_map vm;
+  // po::positional_options_description p;
   try {
-    po::store(po::parse_command_line(argc, argv, desc), vm);  // can throw
+    po::store(po::command_line_parser(argc, argv).options(desc).run(), vm);  // can throw
 
     if (vm.count("help")) {
       std::cout << "ONNX Hosting: host an ONNX model for inferencing with ONNXRuntime\n"
@@ -66,15 +64,15 @@ int main(int argc, char* argv[]) {
     return EXIT_FAILURE;
   }
 
-  onnxruntime::SessionOptions options {};
-  onnxruntime::InferenceSession session(options);
+  // onnxruntime::SessionOptions options {};
+  // onnxruntime::InferenceSession session(options);
 
-  auto const boost_address = boost::asio::ip::make_address(vm["address"].as<std::string>());
+  auto const boost_address = boost::asio::ip::make_address(config.address);
 
   onnxruntime::hosting::App app {};
   app.Post(R"(/v1/models/([^/:]+)(?:/versions/(\d+))?:(classify|regress|predict))", test_request)
-     .Bind(boost_address, vm["port"].as<int>())
-     .NumThreads(vm["threads"].as<int>())
+     .Bind(boost_address, config.port)
+     .NumThreads(config.threads)
      .Run();
 
   return EXIT_SUCCESS;
