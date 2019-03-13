@@ -3,8 +3,9 @@
 
 #include "core/session/inference_session.h"
 
-#include "beast_http.h"
+#include "http_server.h"
 #include "server_configuration.h"
+#include "core/session/inference_session.h"
 
 namespace beast = boost::beast;
 namespace http = beast::http;
@@ -36,7 +37,7 @@ int main(int argc, char* argv[]) {
 
   auto const boost_address = boost::asio::ip::make_address(config.address);
 
-  onnxruntime::hosting::App app {};
+  onnxruntime::hosting::App app{};
   app.Post(R"(/v1/models/([^/:]+)(?:/versions/(\d+))?:(classify|regress|predict))", test_request)
      .Bind(boost_address, config.port)
      .NumThreads(config.threads)
