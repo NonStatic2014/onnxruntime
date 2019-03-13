@@ -29,15 +29,19 @@ set(re2_src ${REPO_ROOT}/cmake/external/re2)
 # Setup source code
 file(GLOB_RECURSE onnxruntime_hosting_lib_srcs
   "${ONNXRUNTIME_ROOT}/hosting/util.cc"
+  "${ONNXRUNTIME_ROOT}/hosting/server_configuration.cc"
 )
+
 file(GLOB_RECURSE onnxruntime_hosting_srcs
   "${ONNXRUNTIME_ROOT}/hosting/main.cc"
 )
+
 if(NOT WIN32)
   if(HAS_UNUSED_PARAMETER)
     set_source_files_properties(${ONNXRUNTIME_ROOT}/hosting/util.cc PROPERTIES COMPILE_FLAGS -Wno-unused-parameter)
   endif()
 endif()
+
 # For IDE only
 source_group(TREE ${REPO_ROOT} FILES ${onnxruntime_hosting_srcs} ${onnxruntime_hosting_lib_srcs})
 
