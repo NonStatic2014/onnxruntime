@@ -29,7 +29,7 @@ void test_request(const std::string& name, const std::string& version,
 }
 
 int main(int argc, char* argv[]) {
-  onnxruntime::hosting::ServerConfiguration config {};
+  onnxruntime::hosting::ServerConfiguration config{};
   config.ParseInput(argc, argv);
 
   // onnxruntime::SessionOptions options {};

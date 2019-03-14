@@ -4,6 +4,9 @@
 #ifndef ONNXRUNTIME_HOSTING_SERVER_CONFIGURATION_H
 #define ONNXRUNTIME_HOSTING_SERVER_CONFIGURATION_H
 
+#include <thread>
+#include <fstream>
+
 #include "boost/program_options.hpp"
 
 namespace onnxruntime {
@@ -11,22 +14,23 @@ namespace hosting {
 
 namespace po = boost::program_options;
 
+// Wrapper around Boost program_options and should provide all the functionality for options parsing
+// Provides sane default values
 class ServerConfiguration {
  public:
   ServerConfiguration() {
-    full_desc = "ONNX Hosting: host an ONNX model for inferencing with ONNXRuntime";
     desc.add_options()("help,h", "Shows a help message and exits");
-    desc.add_options()("address,a", po::value(&address), "The base HTTP address");
-    desc.add_options()("port,p", po::value(&port), "HTTP port to listen to requests");
-    desc.add_options()("threads,t", po::value(&threads), "Number of http threads");
-    desc.add_options()("model_path,m", po::value(&model_path), "Path of the model file");
+    desc.add_options()("model_path,m", po::value(&model_path)->required(), "Path to ONNX model");
+    desc.add_options()("address,a", po::value(&address)->default_value(address), "The base HTTP address");
+    desc.add_options()("port,p", po::value(&port)->default_value(port), "HTTP port to listen to requests");
+    desc.add_options()("threads,t", po::value(&threads)->default_value(threads), "Number of http threads");
   }
 
-  void ParseInput(int argc_, char** argv_) {
+  void ParseInput(int ac, char** av) {
     try {
-      po::store(po::command_line_parser(argc_, argv_).options(desc).run(), vm);  // can throw
+      po::store(po::command_line_parser(ac, av).options(desc).run(), vm);  // can throw
 
-      if (vm.count("help") || vm.count("h")) {
+      if (ContainsHelp()) {
         PrintHelp(std::cout, full_desc);
         return exit(EXIT_SUCCESS);
       }
@@ -41,18 +45,22 @@ class ServerConfiguration {
     }
   }
 
-  std::string full_desc;
-  std::string model_path;
-  std::string address;
-  int port;
-  int threads;
+  bool ContainsHelp() const {
+    return vm.count("help") || vm.count("h");
+  }
 
- private:
-  void PrintHelp(std::ostream& out, const std::string& what) {
+  void PrintHelp(std::ostream& out, const std::string& what) const {
     out << what << std::endl
         << desc << std::endl;
   }
 
+  const std::string full_desc = "ONNX Hosting: host an ONNX model for inferencing with ONNXRuntime";
+  std::string model_path;
+  std::string address = "0.0.0.0";
+  int port = 8080;
+  int threads = std::thread::hardware_concurrency();
+
+ private:
   po::options_description desc{"Allowed options"};
   po::variables_map vm{};
 };
