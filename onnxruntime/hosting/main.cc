@@ -6,6 +6,7 @@
 #include "http_server.h"
 #include "server_configuration.h"
 #include "core/session/inference_session.h"
+#include "environment.h"
 
 namespace beast = boost::beast;
 namespace http = beast::http;
@@ -32,8 +33,15 @@ int main(int argc, char* argv[]) {
   onnxruntime::hosting::ServerConfiguration config{};
   config.ParseInput(argc, argv);
 
-  // onnxruntime::SessionOptions options {};
-  // onnxruntime::InferenceSession session(options);
+  onnxruntime::hosting::HostingEnvironment env;
+  auto logger = env.GetLogger();
+
+  // TODO: below code snippet just trying to show case how to use the "env".
+  //       Will be moved to proper place.
+  LOGS(logger, VERBOSE) << "Logging manager initialized.";
+  LOGS(logger, VERBOSE) << "Model path: " << config.model_path;
+  auto status = env.GetSession()->Load(config.model_path);
+  LOGS(logger, VERBOSE) << "Load Model Status: " << status.Code() << " ---- Error: [" << status.ErrorMessage() << "]";
 
   auto const boost_address = boost::asio::ip::make_address(config.address);
 
