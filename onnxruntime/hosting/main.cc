@@ -44,8 +44,8 @@ int main(int argc, char* argv[]) {
 
   onnxruntime::hosting::App app{};
   app.Post(R"(/v1/models/([^/:]+)(?:/versions/(\d+))?:(classify|regress|predict))", test_request)
-     .Bind(boost_address, config.port)
-     .NumThreads(config.threads)
+     .Bind(boost_address, config.http_port)
+     .NumThreads(config.num_http_threads)
      .Run();
 
   return EXIT_SUCCESS;
