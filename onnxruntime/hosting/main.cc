@@ -1,11 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-#include "core/session/inference_session.h"
-
 #include "http_server.h"
 #include "server_configuration.h"
-#include "core/session/inference_session.h"
 #include "environment.h"
 
 namespace beast = boost::beast;
