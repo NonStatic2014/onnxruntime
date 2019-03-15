@@ -11,6 +11,8 @@
 namespace onnxruntime {
 namespace hosting {
 
+enum Result { ExitSuccess = 1, ExitFailure, ContinueSuccess };
+
 namespace po = boost::program_options;
 
 // Wrapper around Boost program_options and should provide all the functionality for options parsing
@@ -26,25 +28,27 @@ class ServerConfiguration {
   }
 
   // Parses argc and argv and sets the values for the class
-  void ParseInput(int ac, char** av) {
+  // Returns an enum with three options: ExitSuccess, ExitFailure, ContinueSuccess
+  // ExitSuccess and ExitFailure means the program should exit but is left to the caller
+  Result ParseInput(int ac, char** av) {
     try {
       po::store(po::command_line_parser(ac, av).options(desc).run(), vm);  // can throw
 
       if (ContainsHelp()) {
         PrintHelp(std::cout, full_desc);
-        return exit(EXIT_SUCCESS);
+        return Result::ExitSuccess;
       }
 
       po::notify(vm);  // throws on error, so do after help
     } catch (const po::error& e) {
       PrintHelp(std::cerr, e.what());
-      return exit(EXIT_FAILURE);
+      return Result::ExitFailure;
     } catch (const std::exception& e) {
       PrintHelp(std::cerr, e.what());
-      return exit(EXIT_FAILURE);
+      return Result::ExitFailure;
     }
 
-    ValidateOptions();
+    return ValidateOptions();
   }
 
   const std::string full_desc = "ONNX Hosting: host an ONNX model for inferencing with ONNXRuntime";
@@ -55,16 +59,19 @@ class ServerConfiguration {
 
  private:
   // Print help and exit if there is a bad value
-  void ValidateOptions() {
+  Result ValidateOptions() {
     if (num_http_threads <= 0) {
       PrintHelp(std::cerr, "num_http_threads must be greater than 0");
-      return exit(EXIT_FAILURE);
+      return Result::ExitFailure;
     } else if (http_port < 0 || http_port > 65535) {
       PrintHelp(std::cerr, "http_port input invalid");
-      return exit(EXIT_FAILURE);
+      return Result::ExitFailure;
+    } else {
+      return Result::ContinueSuccess;
     }
   }
 
+  // Checks if program options contains help
   bool ContainsHelp() const {
     return vm.count("help") || vm.count("h");
   }

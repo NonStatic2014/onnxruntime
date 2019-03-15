@@ -28,7 +28,13 @@ void test_request(const std::string& name, const std::string& version,
 
 int main(int argc, char* argv[]) {
   onnxruntime::hosting::ServerConfiguration config{};
-  config.ParseInput(argc, argv);
+  auto res = config.ParseInput(argc, argv);
+
+  if (res == onnxruntime::hosting::Result::ExitSuccess) {
+    exit(EXIT_SUCCESS);
+  } else if (res == onnxruntime::hosting::Result::ExitFailure) {
+    exit(EXIT_FAILURE);
+  }
 
   onnxruntime::hosting::HostingEnvironment env;
   auto logger = env.GetLogger();
