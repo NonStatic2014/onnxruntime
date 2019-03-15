@@ -70,7 +70,6 @@ class ServerConfiguration {
       PrintHelp(std::cerr, "http_port input invalid");
       return Result::ExitFailure;
     } else if (!file_exists(model_path)) {
-      // TODO: check filetypes ?
       PrintHelp(std::cerr, "model_path must be the location of a valid file");
       return Result::ExitFailure;
     } else {
@@ -98,7 +97,7 @@ class ServerConfiguration {
 
   po::options_description desc{"Allowed options"};
   po::variables_map vm{};
-};  // namespace hosting
+};
 
 }  // namespace hosting
 }  // namespace onnxruntime
