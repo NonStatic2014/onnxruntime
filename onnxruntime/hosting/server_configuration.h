@@ -5,13 +5,16 @@
 #define ONNXRUNTIME_HOSTING_SERVER_CONFIGURATION_H
 
 #include <thread>
+#include <fstream>
 
 #include "boost/program_options.hpp"
 
 namespace onnxruntime {
 namespace hosting {
 
-enum Result { ExitSuccess = 1, ExitFailure, ContinueSuccess };
+enum Result { ExitSuccess = 1,
+              ExitFailure,
+              ContinueSuccess };
 
 namespace po = boost::program_options;
 
@@ -54,17 +57,21 @@ class ServerConfiguration {
   const std::string full_desc = "ONNX Hosting: host an ONNX model for inferencing with ONNXRuntime";
   std::string model_path;
   std::string address = "0.0.0.0";
-  int http_port = 5000;
+  int http_port = 8001;
   int num_http_threads = std::thread::hardware_concurrency();
 
  private:
-  // Print help and exit if there is a bad value
+  // Print help and return if there is a bad value
   Result ValidateOptions() {
     if (num_http_threads <= 0) {
       PrintHelp(std::cerr, "num_http_threads must be greater than 0");
       return Result::ExitFailure;
     } else if (http_port < 0 || http_port > 65535) {
       PrintHelp(std::cerr, "http_port input invalid");
+      return Result::ExitFailure;
+    } else if (!file_exists(model_path)) {
+      // TODO: check filetypes ?
+      PrintHelp(std::cerr, "model_path must be the location of a valid file");
       return Result::ExitFailure;
     } else {
       return Result::ContinueSuccess;
@@ -84,9 +91,14 @@ class ServerConfiguration {
         << desc << std::endl;
   }
 
+  inline bool file_exists(const std::string& fileName) {
+    std::ifstream infile(fileName.c_str());
+    return infile.good();
+  }
+
   po::options_description desc{"Allowed options"};
   po::variables_map vm{};
-};
+};  // namespace hosting
 
 }  // namespace hosting
 }  // namespace onnxruntime
