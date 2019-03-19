@@ -41,6 +41,13 @@ file(GLOB_RECURSE onnxruntime_hosting_srcs
   "${ONNXRUNTIME_ROOT}/hosting/environment.cc"
 )
 
+# TEMP
+if(NOT WIN32)
+  if(HAS_UNUSED_PARAMETER)
+    set_source_files_properties(${ONNXRUNTIME_ROOT}/hosting/main.cc PROPERTIES COMPILE_FLAGS -Wno-unused-parameter)
+  endif()
+endif()
+
 # For IDE only
 source_group(TREE ${REPO_ROOT} FILES ${onnxruntime_hosting_srcs} ${onnxruntime_hosting_lib_srcs})
 
@@ -74,12 +81,18 @@ target_link_libraries(onnxruntime_hosting_lib PRIVATE
 add_executable(${PROJECT_NAME} ${onnxruntime_hosting_srcs})
 add_dependencies(${PROJECT_NAME} hosting_proto onnx_proto ${onnxruntime_EXTERNAL_DEPENDENCIES})
 
-onnxruntime_add_include_to_target(${PROJECT_NAME} onnxruntime_session gsl hosting_proto)
+onnxruntime_add_include_to_target(${PROJECT_NAME} onnxruntime_common onnxruntime_session gsl hosting_proto onnx onnx_proto protobuf::libprotobuf)
 
-target_include_directories(${PROJECT_NAME} PRIVATE
+target_include_directories(${PROJECT_NAME} PUBLIC
     ${ONNXRUNTIME_ROOT}
     ${ONNXRUNTIME_ROOT}/hosting/http
+    ${ONNXRUNTIME_ROOT}/core/platform
+    ${ONNXRUNTIME_ROOT}/core/framework
     ${Boost_INCLUDE_DIR}
+    #TEMP
+    ${CMAKE_CURRENT_BINARY_DIR}/onnx
+    $<TARGET_PROPERTY:protobuf::libprotobuf,INTERFACE_INCLUDE_DIRECTORIES> "${CMAKE_CURRENT_BINARY_DIR}/.."
+    ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
