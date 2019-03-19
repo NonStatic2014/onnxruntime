@@ -41,9 +41,6 @@ file(GLOB_RECURSE onnxruntime_hosting_srcs
   "${ONNXRUNTIME_ROOT}/hosting/environment.cc"
 )
 
-# For IDE only
-source_group(TREE ${REPO_ROOT} FILES ${onnxruntime_hosting_srcs} ${onnxruntime_hosting_lib_srcs})
-
 # Hosting library
 add_library(onnxruntime_hosting_lib ${onnxruntime_hosting_lib_srcs})
 target_include_directories(onnxruntime_hosting_lib PRIVATE
@@ -70,20 +67,27 @@ target_link_libraries(onnxruntime_hosting_lib PRIVATE
   ${onnxruntime_EXTERNAL_LIBRARIES}
 )
 
+# For IDE only
+source_group(TREE ${REPO_ROOT} FILES ${onnxruntime_hosting_srcs} ${onnxruntime_hosting_lib_srcs} ${onnxruntime_hosting_lib})
+
 # Hosting Application
 add_executable(${PROJECT_NAME} ${onnxruntime_hosting_srcs})
 add_dependencies(${PROJECT_NAME} hosting_proto onnx_proto ${onnxruntime_EXTERNAL_DEPENDENCIES})
 
-onnxruntime_add_include_to_target(${PROJECT_NAME} onnxruntime_session gsl hosting_proto)
+if(NOT WIN32)
+  if(HAS_UNUSED_PARAMETER)
+    set_source_files_properties("${ONNXRUNTIME_ROOT}/hosting/main.cc" PROPERTIES COMPILE_FLAGS -Wno-unused-parameter)
+  endif()
+endif()
+
+onnxruntime_add_include_to_target(${PROJECT_NAME} onnxruntime_session onnxruntime_hosting_lib gsl onnx_proto hosting_proto)
 
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${ONNXRUNTIME_ROOT}
     ${ONNXRUNTIME_ROOT}/hosting/http
-    ${Boost_INCLUDE_DIR}
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     onnxruntime_hosting_lib
-    hosting_proto
 )
 
