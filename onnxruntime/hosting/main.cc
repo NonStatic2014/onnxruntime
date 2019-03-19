@@ -9,17 +9,91 @@
 #include "json_handling.h"
 
 #include "core/platform/env.h"
+#include "core/framework/data_types.h"
 #include "core/framework/framework_common.h"
 #include "core/framework/mem_buffer.h"
 #include "core/framework/ml_value.h"
 #include "core/framework/tensorprotoutils.h"
 
+#include "onnx-ml.pb.h"
 #include "predict.pb.h"
 
 namespace beast = boost::beast;
 namespace http = beast::http;
+namespace protobufutil = google::protobuf::util;
 
 onnxruntime::hosting::HostingEnvironment env;
+
+onnx::TensorProto_DataType MLDataTypeToTensorProtoDataType(
+    const onnxruntime::DataTypeImpl* cpp_type) {
+  onnx::TensorProto_DataType type;
+  if (cpp_type == onnxruntime::DataTypeImpl::GetType<float>()) {
+    type = onnx::TensorProto_DataType_FLOAT;
+  } else if (cpp_type == onnxruntime::DataTypeImpl::GetType<uint8_t>()) {
+    type = onnx::TensorProto_DataType_UINT8;
+  } else if (cpp_type == onnxruntime::DataTypeImpl::GetType<int8_t>()) {
+    type = onnx::TensorProto_DataType_INT8;
+  } else if (cpp_type == onnxruntime::DataTypeImpl::GetType<uint16_t>()) {
+    type = onnx::TensorProto_DataType_UINT16;
+  } else if (cpp_type == onnxruntime::DataTypeImpl::GetType<int16_t>()) {
+    type = onnx::TensorProto_DataType_INT16;
+  } else if (cpp_type == onnxruntime::DataTypeImpl::GetType<int32_t>()) {
+    type = onnx::TensorProto_DataType_INT32;
+  } else if (cpp_type == onnxruntime::DataTypeImpl::GetType<int64_t>()) {
+    type = onnx::TensorProto_DataType_INT64;
+  } else if (cpp_type == onnxruntime::DataTypeImpl::GetType<std::string>()) {
+    type = onnx::TensorProto_DataType_STRING;
+  } else if (cpp_type == onnxruntime::DataTypeImpl::GetType<bool>()) {
+    type = onnx::TensorProto_DataType_BOOL;
+  } else if (cpp_type == onnxruntime::DataTypeImpl::GetType<onnxruntime::MLFloat16>()) {
+    type = onnx::TensorProto_DataType_FLOAT16;
+  } else if (cpp_type == onnxruntime::DataTypeImpl::GetType<onnxruntime::BFloat16>()) {
+    type = onnx::TensorProto_DataType_BFLOAT16;
+  } else if (cpp_type == onnxruntime::DataTypeImpl::GetType<double>()) {
+    type = onnx::TensorProto_DataType_DOUBLE;
+  } else if (cpp_type == onnxruntime::DataTypeImpl::GetType<uint32_t>()) {
+    type = onnx::TensorProto_DataType_UINT32;
+  } else if (cpp_type == onnxruntime::DataTypeImpl::GetType<uint64_t>()) {
+    type = onnx::TensorProto_DataType_UINT64;
+  } else {
+    type = onnx::TensorProto_DataType_UNDEFINED;
+  }
+  return type;
+}
+
+protobufutil::Status MLValue2TensorProto(onnxruntime::MLValue& ml_value, /* out */ onnx::TensorProto& tensor_proto) {
+  // Tensor in MLValue
+  onnxruntime::Tensor* tensor = ml_value.GetMutable<onnxruntime::Tensor>();
+
+  // dims
+  const onnxruntime::TensorShape& tensor_shape = tensor->Shape();
+  for (auto dim : tensor_shape.GetDims()) {
+    tensor_proto.add_dims(dim);
+  }
+
+  // data_type
+  auto data_type = MLDataTypeToTensorProtoDataType(tensor->DataType());
+  tensor_proto.set_data_type(data_type);
+
+  // segment: ignored for now. We do not expect very large tensors in the output
+
+  // data
+  tensor_proto.set_raw_data(tensor->Data<float>(), tensor->Size());
+  //  switch (data_type) {
+  //    case onnx::TensorProto_DataType_FLOAT: {
+  //      auto data = tensor->Data<float>();
+  //      size_t data_length = tensor->Size() / sizeof(float);
+  //      for (int i = 0; i < data_length; ++i) {
+  //        tensor_proto.add_float_data(data[i]);
+  //      }
+  //      break;
+  //    }
+  //    default:
+  //      std::cout << "error: " << data_type << std::endl;
+  //  }
+
+  return protobufutil::Status(protobufutil::Status::OK);
+}
 
 void test_request(const std::string& name, const std::string& version,
                   const std::string& action, onnxruntime::hosting::HttpContext& context) {
@@ -71,14 +145,29 @@ void test_request(const std::string& name, const std::string& version,
   ss << "\tRun Status: " << run_status.Code() << ". Error Message: [" << run_status.ErrorMessage() << "]" << std::endl;
   ss << "\tCurrent Num Runs: " << env.GetSession()->GetCurrentNumRuns() << std::endl;
 
-  onnxruntime::hosting::PredictResponse predict_response;
-  auto oTensorProto = outputs[0].GetMutable<onnxruntime::Tensor>();
-  ::onnx::TensorProto* my_tensor = reinterpret_cast<::onnx::TensorProto*>(oTensorProto);
-  (*(predict_response.mutable_outputs()))[output_names[0]] = *my_tensor;
+  auto oTensor = outputs[0].GetMutable<onnxruntime::Tensor>();
+  auto t = MLDataTypeToTensorProtoDataType(oTensor->DataType());
+  ss << "\tOutput Data Type: " << t << std::endl;
+  ss << "\tOutput Shape: " << oTensor->Shape().ToString() << std::endl;
+  ss << "\tOutput Size: " << oTensor->Size() << std::endl;
 
+  //  onnxruntime::hosting::PredictResponse predict_response;
+  //  auto oTensorProto = outputs[0].GetMutable<onnxruntime::Tensor>();
+  //  ::onnx::TensorProto* my_tensor = reinterpret_cast<::onnx::TensorProto*>(oTensorProto);
+  //  (*(predict_response.mutable_outputs()))[output_names[0]] = *my_tensor;
+  //
+  //  std::string json_response;
+  //  auto pd2json_result = GenerateResponseInJson(predict_response, json_response);
+  //
+  //  ss << "\tJson Response: " << json_response << std::endl;
+
+  onnx::TensorProto output_tensor;
+  auto mlvalue2tensorproto_status = MLValue2TensorProto(outputs[0], output_tensor);
+
+  onnxruntime::hosting::PredictResponse predict_response;
+  predict_response.mutable_outputs()->insert({output_names[0], output_tensor});
   std::string json_response;
   auto pd2json_result = GenerateResponseInJson(predict_response, json_response);
-
   ss << "\tJson Response: " << json_response << std::endl;
 
   // Build response
