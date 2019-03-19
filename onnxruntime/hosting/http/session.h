@@ -45,12 +45,12 @@ class HttpSession : public std::enable_shared_from_this<HttpSession> {
   http::request<http::string_body> req_;
   std::shared_ptr<void> res_{nullptr};
 
-// Writes the message asynchronously back to the socket
-// Stores the pointer to the message and the class itself so that
-// They do not get destructed before the async process is finished
-// If you pass shared_from_this() are guaranteed that the life time
-// of your object will be extended to as long as the function needs it
-// Most examples in boost::asio are based on this logic
+  // Writes the message asynchronously back to the socket
+  // Stores the pointer to the message and the class itself so that
+  // They do not get destructed before the async process is finished
+  // If you pass shared_from_this() are guaranteed that the life time
+  // of your object will be extended to as long as the function needs it
+  // Most examples in boost::asio are based on this logic
   template <class Msg>
   void Send(Msg&& msg);
 
@@ -60,15 +60,16 @@ class HttpSession : public std::enable_shared_from_this<HttpSession> {
   template <typename Body, typename Allocator>
   void HandleRequest(http::request<Body, http::basic_fields<Allocator>>&& req);
 
-// Asynchronously reads the request from the socket
+  // Asynchronously reads the request from the socket
   void DoRead();
 
-// Perform error checking before handing off to HandleRequest
+  // Perform error checking before handing off to HandleRequest
   void OnRead(beast::error_code ec, std::size_t bytes_transferred);
 
-// After writing, make the session read another request
+  // After writing, make the session read another request
   void OnWrite(beast::error_code ec, std::size_t bytes_transferred, bool close);
 
+  // Close the connection
   void DoClose();
 };
 

@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
   hosting::App app{};
   app.Post(R"(/v1/models/([^/:]+)(?:/versions/(\d+))?:(classify|regress|predict))",
            [&env](const std::string& name, const std::string& version, const std::string& action, hosting::HttpContext& context) {
-             hosting::test_request(name, version, action, context, env);
+             hosting::Predict(name, version, action, context, env);
            });
 
   app.Bind(boost_address, config.http_port)
