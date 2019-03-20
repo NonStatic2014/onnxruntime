@@ -39,6 +39,7 @@ endif()
 file(GLOB_RECURSE onnxruntime_hosting_srcs
   "${ONNXRUNTIME_ROOT}/hosting/main.cc"
   "${ONNXRUNTIME_ROOT}/hosting/environment.cc"
+  "${ONNXRUNTIME_ROOT}/hosting/request_handler.cc"
 )
 
 # Hosting library
@@ -77,6 +78,7 @@ add_dependencies(${PROJECT_NAME} hosting_proto onnx_proto ${onnxruntime_EXTERNAL
 if(NOT WIN32)
   if(HAS_UNUSED_PARAMETER)
     set_source_files_properties("${ONNXRUNTIME_ROOT}/hosting/main.cc" PROPERTIES COMPILE_FLAGS -Wno-unused-parameter)
+    set_source_files_properties("${ONNXRUNTIME_ROOT}/hosting/request_handler.cc" PROPERTIES COMPILE_FLAGS -Wno-unused-parameter)
   endif()
 endif()
 
