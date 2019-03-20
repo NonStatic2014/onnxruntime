@@ -61,7 +61,7 @@ onnx::TensorProto_DataType MLDataTypeToTensorProtoDataType(
   return type;
 }
 
-protobufutil::Status MLValue2TensorProto(onnxruntime::MLValue& ml_value, /* out */ onnx::TensorProto& tensor_proto) {
+protobufutil::Status MLValue2TensorProto(onnxruntime::MLValue& ml_value, bool using_raw_data, /* out */ onnx::TensorProto& tensor_proto) {
   // Tensor in MLValue
   onnxruntime::Tensor* tensor = ml_value.GetMutable<onnxruntime::Tensor>();
 
@@ -78,7 +78,9 @@ protobufutil::Status MLValue2TensorProto(onnxruntime::MLValue& ml_value, /* out 
   // segment: ignored for now. We do not expect very large tensors in the output
 
   // data
-  tensor_proto.set_raw_data(tensor->Data<float>(), tensor->Size());
+  if (using_raw_data) {
+    tensor_proto.set_raw_data(tensor->Data<float>(), tensor->Size());
+  }
   //  switch (data_type) {
   //    case onnx::TensorProto_DataType_FLOAT: {
   //      auto data = tensor->Data<float>();
@@ -129,6 +131,7 @@ void test_request(const std::string& name, const std::string& version,
 
   ss << "\tIs Tensor: " << ml_value->IsTensor() << std::endl;
   ss << "\tType: " << ml_value->Type() << std::endl;
+  ss << "\tDoes Tensor has raw data: " << one_tensorproto.has_raw_data() << std::endl;
 
   ss << "\tCurrent Num Runs: " << env.GetSession()->GetCurrentNumRuns() << std::endl;
 
@@ -162,7 +165,7 @@ void test_request(const std::string& name, const std::string& version,
   //  ss << "\tJson Response: " << json_response << std::endl;
 
   onnx::TensorProto output_tensor;
-  auto mlvalue2tensorproto_status = MLValue2TensorProto(outputs[0], output_tensor);
+  auto mlvalue2tensorproto_status = MLValue2TensorProto(outputs[0], one_tensorproto.has_raw_data(), output_tensor);
 
   onnxruntime::hosting::PredictResponse predict_response;
   predict_response.mutable_outputs()->insert({output_names[0], output_tensor});
