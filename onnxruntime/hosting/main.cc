@@ -3,7 +3,7 @@
 
 #include "environment.h"
 #include "http_server.h"
-#include "request_handler.h"
+#include "predict_request_handler.h"
 #include "server_configuration.h"
 
 namespace beast = boost::beast;

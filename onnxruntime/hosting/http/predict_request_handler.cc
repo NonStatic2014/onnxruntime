@@ -44,7 +44,8 @@ void Predict(const std::string& name,
   }
 
   http::response<http::string_body> res{std::piecewise_construct,
-                                        std::make_tuple(body), std::make_tuple(http::status::ok, context.request.version())};
+                                        std::make_tuple(body),
+                                        std::make_tuple(http::status::ok, context.request.version())};
   res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
   res.set(http::field::content_type, "application/json");
   res.keep_alive(context.request.keep_alive());
@@ -52,4 +53,4 @@ void Predict(const std::string& name,
 };
 
 }  // namespace hosting
-}  // namespace onnxruntime/ Licensed under the MIT License.
+}  // namespace onnxruntime
