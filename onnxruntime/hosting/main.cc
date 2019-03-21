@@ -33,14 +33,14 @@ int main(int argc, char* argv[]) {
 
   app.OnStartup(
       [&env](const auto& details) {
-          auto logger = env->GetLogger();
-          LOGS(logger, VERBOSE) << "Listening at: " << "http://" << details.address << ":" << details.port;
+        auto logger = env->GetLogger();
+        LOGS(logger, VERBOSE) << "Listening at: " << "http://" << details.address << ":" << details.port;
       });
 
   app.OnPost(R"(/v1/models/([^/:]+)(?:/versions/(\d+))?:(classify|regress|predict))",
-           [env](const auto& name, const auto& version, const auto& action, auto& context) {
-             hosting::Predict(name, version, action, context, env);
-           });
+             [env](const auto& name, const auto& version, const auto& action, auto& context) {
+               hosting::Predict(name, version, action, context, env);
+             });
 
   app.Bind(boost_address, config.http_port)
       .NumThreads(config.num_http_threads)

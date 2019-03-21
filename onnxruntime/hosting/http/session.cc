@@ -87,7 +87,7 @@ void HttpSession::Send(Msg&& msg) {
 
   http::async_write(self_->socket_, *ptr,
                     net::bind_executor(strand_,
-                                       [self_, close = ptr->need_eof()](beast::error_code ec, std::size_t bytes) {
+                                       [ self_, close = ptr->need_eof() ](beast::error_code ec, std::size_t bytes) {
                                          self_->OnWrite(ec, bytes, close);
                                        }));
 }
@@ -97,12 +97,11 @@ void HttpSession::HandleRequest(http::request<Body, http::basic_fields<Allocator
   HttpContext context{};
   context.request = std::move(req);
 
+  // TODO: set request id
   std::string path = context.request.target().to_string();
   std::string model_name, model_version, action;
   handler_fn func;
   http::status status = routes_->ParseUrl(context.request.method(), path, model_name, model_version, action, func);
-
-  // TODO: set request id
 
   if (http::status::ok == status && func != nullptr) {
     func(model_name, model_version, action, context);
@@ -110,16 +109,9 @@ void HttpSession::HandleRequest(http::request<Body, http::basic_fields<Allocator
     context.response.result(status);
   }
 
-  PrepareRequestResponse(context);
-  return Send(std::move(context.response));
-}
-
-void HttpSession::PrepareRequestResponse(HttpContext& context) {
-  context.response.set(http::field::server, "ONNXRuntime Hosting");
-  context.response.set(http::field::content_type, "application/json");
   context.response.keep_alive(context.request.keep_alive());
-
   context.response.prepare_payload();
+  return Send(std::move(context.response));
 }
 
 }  // namespace hosting

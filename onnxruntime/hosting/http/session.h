@@ -71,9 +71,6 @@ class HttpSession : public std::enable_shared_from_this<HttpSession> {
 
   // Close the connection
   void DoClose();
-
-  // Prepare request/response for delivery
-  void PrepareRequestResponse(HttpContext& context);
 };
 
 }  // namespace hosting
