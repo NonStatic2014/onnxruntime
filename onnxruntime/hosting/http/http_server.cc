@@ -26,7 +26,7 @@ using handler_fn = std::function<void(std::string, std::string, std::string, Htt
 
 App::App() {
   http_details.address = boost::asio::ip::make_address_v4("0.0.0.0");
-  http_details.port = 8080;
+  http_details.port = 8001;
   http_details.threads = std::thread::hardware_concurrency();
 }
 
