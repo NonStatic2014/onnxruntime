@@ -28,7 +28,6 @@ set(re2_src ${REPO_ROOT}/cmake/external/re2)
 
 # Setup source code
 file(GLOB_RECURSE onnxruntime_hosting_lib_srcs
-  "${ONNXRUNTIME_ROOT}/hosting/http/*.h"
   "${ONNXRUNTIME_ROOT}/hosting/http/*.cc"
 )
 if(NOT WIN32)

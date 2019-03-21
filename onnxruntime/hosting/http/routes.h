@@ -14,7 +14,6 @@ namespace hosting {
 namespace http = boost::beast::http;  // from <boost/beast/http.hpp>
 
 using handler_fn = std::function<void(std::string, std::string, std::string, HttpContext&)>;
-using start_fn = std::function<void()>;
 
 // This class maintains two lists of regex -> function lists. One for POST requests and one for GET requests
 // If the incoming URL could match more than one regex, the first one will win.

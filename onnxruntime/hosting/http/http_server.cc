@@ -25,24 +25,24 @@ namespace hosting {
 using handler_fn = std::function<void(std::string, std::string, std::string, HttpContext&)>;
 
 App::App() {
-  address_ = boost::asio::ip::make_address_v4("0.0.0.0");
-  port_ = 8080;
-  threads_ = std::thread::hardware_concurrency();
+  http_details.address = boost::asio::ip::make_address_v4("0.0.0.0");
+  http_details.port = 8080;
+  http_details.threads = std::thread::hardware_concurrency();
 }
 
 App& App::Bind(net::ip::address address, unsigned short port) {
-  address_ = std::move(address);
-  port_ = port;
+  http_details.address = std::move(address);
+  http_details.port = port;
   return *this;
 }
 
 App& App::NumThreads(int threads) {
-  threads_ = threads;
+  http_details.threads = threads;
   return *this;
 }
 
-App& App::OnStart(const start_fn& fn) {
-  fn();
+App& App::OnStart(const start_fn& on_start) {
+  on_start_ = on_start;
   return *this;
 }
 
@@ -52,14 +52,17 @@ App& App::Post(const std::string& route, const handler_fn& fn) {
 }
 
 App& App::Run() {
-  net::io_context ioc{threads_};
+  net::io_context ioc{http_details.threads};
   // Create and launch a listening port
-  std::make_shared<Listener>(routes_, ioc, tcp::endpoint{address_, port_})->Run();
+  std::make_shared<Listener>(routes_, ioc, tcp::endpoint{http_details.address, http_details.port})->Run();
+
+  // Run user on start function
+  on_start_(http_details);
 
   // Run the I/O service on the requested number of threads
   std::vector<std::thread> v;
-  v.reserve(threads_ - 1);
-  for (auto i = threads_ - 1; i > 0; --i) {
+  v.reserve(http_details.threads - 1);
+  for (auto i = http_details.threads - 1; i > 0; --i) {
     v.emplace_back(
         [&ioc] {
           ioc.run();
