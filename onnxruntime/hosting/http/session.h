@@ -29,7 +29,7 @@ using handler_fn = std::function<void(std::string, std::string, std::string, Htt
 // Used by a listener to hand off the work and async write back to a socket
 class HttpSession : public std::enable_shared_from_this<HttpSession> {
  public:
-  HttpSession(std::shared_ptr<Routes> routes, tcp::socket socket);
+  HttpSession(std::shared_ptr<Routes> routes, std::shared_ptr<HostingEnvironment> env, tcp::socket socket);
 
   // Start the asynchronous operation
   // The entrypoint for the class
@@ -39,6 +39,7 @@ class HttpSession : public std::enable_shared_from_this<HttpSession> {
 
  private:
   const std::shared_ptr<Routes> routes_;
+  const std::shared_ptr<HostingEnvironment> env_;
   tcp::socket socket_;
   net::strand<net::io_context::executor_type> strand_;
   beast::flat_buffer buffer_;
@@ -71,6 +72,9 @@ class HttpSession : public std::enable_shared_from_this<HttpSession> {
 
   // Close the connection
   void DoClose();
+
+  // Prepare request/response for delivery
+  void PrepareRequestResponse(HttpContext& context);
 };
 
 }  // namespace hosting

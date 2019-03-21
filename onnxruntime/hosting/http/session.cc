@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+#include "environment.h"
 #include "session.h"
 
 namespace onnxruntime {
@@ -12,8 +13,8 @@ using tcp = boost::asio::ip::tcp;  // from <boost/asio/ip/tcp.hpp>
 
 using handler_fn = std::function<void(std::string, std::string, std::string, HttpContext&)>;
 
-HttpSession::HttpSession(std::shared_ptr<Routes> routes, tcp::socket socket)
-    : routes_(std::move(routes)), socket_(std::move(socket)), strand_(socket_.get_executor()) {
+HttpSession::HttpSession(std::shared_ptr<Routes> routes, std::shared_ptr<HostingEnvironment> env, tcp::socket socket)
+    : routes_(std::move(routes)), env_(std::move(env)), socket_(std::move(socket)), strand_(socket_.get_executor()) {
 }
 
 void HttpSession::DoRead() {
@@ -93,30 +94,33 @@ void HttpSession::Send(Msg&& msg) {
 }
 
 template <typename Body, typename Allocator>
-void HttpSession::HandleRequest(boost::beast::http::request<Body, boost::beast::http::basic_fields<Allocator> >&& req) {
+void HttpSession::HandleRequest(http::request<Body, http::basic_fields<Allocator> >&& req) {
   HttpContext context{};
-  context.request = req;
+  context.request = std::move(req);
 
-  std::string path = req.target().to_string();
-  std::string model_name;
-  std::string model_version;
-  std::string action;
+  std::string path = context.request.target().to_string();
+  std::string model_name, model_version, action;
   handler_fn func;
-  http::status status = routes_->ParseUrl(req.method(), path, model_name, model_version, action, func);
+  http::status status = routes_->ParseUrl(context.request.method(), path, model_name, model_version, action, func);
+
+  // TODO: set request id
 
   if (http::status::ok == status && func != nullptr) {
     func(model_name, model_version, action, context);
   } else {
-    http::response<http::string_body> res{status, req.version()};
-    res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
-    res.set(http::field::content_type, "text/plain");
-    res.keep_alive(req.keep_alive());
-    res.body() = std::string("Something failed\n");
-    res.prepare_payload();
-    context.response = res;
+    context.response.result(status);
   }
 
+  PrepareRequestResponse(context);
   return Send(std::move(context.response));
+}
+
+void HttpSession::PrepareRequestResponse(HttpContext& context) {
+  context.response.set(http::field::server, "ONNXRuntime Hosting");
+  context.response.set(http::field::content_type, "application/json");
+  context.response.keep_alive(context.request.keep_alive());
+
+  context.response.prepare_payload();
 }
 
 }  // namespace hosting

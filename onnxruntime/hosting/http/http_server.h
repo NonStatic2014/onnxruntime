@@ -30,7 +30,7 @@ using handler_fn = std::function<void(std::string, std::string, std::string, Htt
 // Each method returns the app itself so methods can be chained
 class App {
  public:
-  App();
+  explicit App(std::shared_ptr<HostingEnvironment> env);
 
   App& Bind(net::ip::address address, unsigned short port);
   App& NumThreads(int threads);
@@ -38,7 +38,8 @@ class App {
   App& Run();
 
  private:
-  const std::shared_ptr<Routes> routes = std::make_shared<Routes>();
+  const std::shared_ptr<Routes> routes_ = std::make_shared<Routes>();
+  std::shared_ptr<HostingEnvironment> env_;
   net::ip::address address_;
   unsigned short port_;
   int threads_;

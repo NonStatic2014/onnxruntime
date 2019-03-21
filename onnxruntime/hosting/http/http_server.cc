@@ -4,18 +4,15 @@
 #include <functional>
 #include <iostream>
 #include <memory>
-#include <string>
 #include <thread>
 #include <vector>
 #include <boost/asio.hpp>
-#include <boost/asio/ip/tcp.hpp>
 #include <boost/beast/http.hpp>
 
 #include "context.h"
 #include "session.h"
 #include "listener.h"
-#include "routes.h"
-#include "util.h"
+#include "environment.h"
 
 #include "http_server.h"
 
@@ -28,8 +25,7 @@ namespace hosting {
 
 using handler_fn = std::function<void(std::string, std::string, std::string, HttpContext&)>;
 
-App::App() {
-  // TODO: defaults should come from central place
+App::App(std::shared_ptr<HostingEnvironment> env): env_(std::move(env)) {
   address_ = boost::asio::ip::make_address_v4("0.0.0.0");
   port_ = 8080;
   threads_ = std::thread::hardware_concurrency();
@@ -47,14 +43,14 @@ App& App::NumThreads(int threads) {
 }
 
 App& App::Post(const std::string& route, const handler_fn& fn) {
-  routes->RegisterController(http::verb::post, route, fn);
+  routes_->RegisterController(http::verb::post, route, fn);
   return *this;
 }
 
 App& App::Run() {
   net::io_context ioc{threads_};
   // Create and launch a listening port
-  std::make_shared<Listener>(routes, ioc, tcp::endpoint{address_, port_})->Run();
+  std::make_shared<Listener>(routes_, env_, ioc, tcp::endpoint{address_, port_})->Run();
 
   // TODO: use logger
   std::cout << "Listening at: \n"
