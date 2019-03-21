@@ -31,13 +31,13 @@ int main(int argc, char* argv[]) {
 
   hosting::App app{};
 
-  app.OnStart(
+  app.OnStartup(
       [&env](const auto& details) {
           auto logger = env->GetLogger();
           LOGS(logger, VERBOSE) << "Listening at: " << "http://" << details.address << ":" << details.port;
       });
 
-  app.Post(R"(/v1/models/([^/:]+)(?:/versions/(\d+))?:(classify|regress|predict))",
+  app.OnPost(R"(/v1/models/([^/:]+)(?:/versions/(\d+))?:(classify|regress|predict))",
            [env](const auto& name, const auto& version, const auto& action, auto& context) {
              hosting::Predict(name, version, action, context, env);
            });
