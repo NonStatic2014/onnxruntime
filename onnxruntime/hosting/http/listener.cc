@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-#include "environment.h"
 #include "listener.h"
 #include "session.h"
 #include "util.h"
@@ -12,8 +11,8 @@ namespace hosting {
 namespace net = boost::asio;       // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;  // from <boost/asio/ip/tcp.hpp>
 
-Listener::Listener(std::shared_ptr<Routes> routes, std::shared_ptr<HostingEnvironment> env, net::io_context& ioc, const tcp::endpoint& endpoint)
-    : routes_(std::move(routes)), env_(std::move(env)), acceptor_(ioc), socket_(ioc) {
+Listener::Listener(std::shared_ptr<Routes> routes, net::io_context& ioc, const tcp::endpoint& endpoint)
+    : routes_(std::move(routes)), acceptor_(ioc), socket_(ioc) {
   beast::error_code ec;
 
   // Open the acceptor
@@ -66,7 +65,7 @@ void Listener::OnAccept(beast::error_code ec) {
   if (ec) {
     ErrorHandling(ec, "accept");
   } else {
-    std::make_shared<HttpSession>(routes_, env_, std::move(socket_))->Run();
+    std::make_shared<HttpSession>(routes_, std::move(socket_))->Run();
   }
 
   // Accept another connection

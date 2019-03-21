@@ -12,7 +12,6 @@
 #include "context.h"
 #include "session.h"
 #include "listener.h"
-#include "environment.h"
 
 #include "http_server.h"
 
@@ -25,7 +24,7 @@ namespace hosting {
 
 using handler_fn = std::function<void(std::string, std::string, std::string, HttpContext&)>;
 
-App::App(std::shared_ptr<HostingEnvironment> env): env_(std::move(env)) {
+App::App() {
   address_ = boost::asio::ip::make_address_v4("0.0.0.0");
   port_ = 8080;
   threads_ = std::thread::hardware_concurrency();
@@ -42,6 +41,11 @@ App& App::NumThreads(int threads) {
   return *this;
 }
 
+App& App::OnStart(const start_fn& fn) {
+  fn();
+  return *this;
+}
+
 App& App::Post(const std::string& route, const handler_fn& fn) {
   routes_->RegisterController(http::verb::post, route, fn);
   return *this;
@@ -50,12 +54,7 @@ App& App::Post(const std::string& route, const handler_fn& fn) {
 App& App::Run() {
   net::io_context ioc{threads_};
   // Create and launch a listening port
-  std::make_shared<Listener>(routes_, env_, ioc, tcp::endpoint{address_, port_})->Run();
-
-  // TODO: use logger
-  std::cout << "Listening at: \n"
-            << std::endl;
-  std::cout << "\thttp://" << address_ << ":" << port_ << std::endl;
+  std::make_shared<Listener>(routes_, ioc, tcp::endpoint{address_, port_})->Run();
 
   // Run the I/O service on the requested number of threads
   std::vector<std::thread> v;

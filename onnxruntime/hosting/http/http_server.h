@@ -11,6 +11,8 @@
 #include <thread>
 #include <vector>
 
+#include "core/common/logging/logging.h"
+
 #include "util.h"
 #include "context.h"
 #include "routes.h"
@@ -24,22 +26,20 @@ namespace http = beast::http;      // from <boost/beast/http.hpp>
 namespace net = boost::asio;       // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;  // from <boost/asio/ip/tcp.hpp>
 
-using handler_fn = std::function<void(std::string, std::string, std::string, HttpContext&)>;
-
 // Accepts incoming connections and launches the sessions
 // Each method returns the app itself so methods can be chained
 class App {
  public:
-  explicit App(std::shared_ptr<HostingEnvironment> env);
+  explicit App();
 
   App& Bind(net::ip::address address, unsigned short port);
   App& NumThreads(int threads);
+  App& OnStart(const start_fn& fn);
   App& Post(const std::string& route, const handler_fn& fn);
   App& Run();
 
  private:
   const std::shared_ptr<Routes> routes_ = std::make_shared<Routes>();
-  std::shared_ptr<HostingEnvironment> env_;
   net::ip::address address_;
   unsigned short port_;
   int threads_;

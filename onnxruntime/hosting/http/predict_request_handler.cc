@@ -20,9 +20,9 @@ void Predict(const std::string& name,
              const std::string& version,
              const std::string& action,
              HttpContext& context,
-             HostingEnvironment& env) {
+             std::shared_ptr<HostingEnvironment> env) {
   PredictRequest predictRequest{};
-  auto logger = env.GetLogger();
+  auto logger = env->GetLogger();
 
   LOGS(logger, VERBOSE) << "Name: " << name;
   LOGS(logger, VERBOSE) << "Version: " << version;

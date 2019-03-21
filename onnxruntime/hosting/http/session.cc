@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-#include "environment.h"
 #include "session.h"
 
 namespace onnxruntime {
@@ -13,8 +12,8 @@ using tcp = boost::asio::ip::tcp;  // from <boost/asio/ip/tcp.hpp>
 
 using handler_fn = std::function<void(std::string, std::string, std::string, HttpContext&)>;
 
-HttpSession::HttpSession(std::shared_ptr<Routes> routes, std::shared_ptr<HostingEnvironment> env, tcp::socket socket)
-    : routes_(std::move(routes)), env_(std::move(env)), socket_(std::move(socket)), strand_(socket_.get_executor()) {
+HttpSession::HttpSession(std::shared_ptr<Routes> routes, tcp::socket socket)
+    : routes_(std::move(routes)), socket_(std::move(socket)), strand_(socket_.get_executor()) {
 }
 
 void HttpSession::DoRead() {

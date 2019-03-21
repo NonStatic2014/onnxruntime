@@ -22,18 +22,20 @@ int main(int argc, char* argv[]) {
 
   auto env = std::make_shared<hosting::HostingEnvironment>();
   auto logger = env->GetLogger();
-
-  // TODO: below code snippet just trying to show case how to use the "env". Move later.
-  LOGS(logger, VERBOSE) << "Logging manager initialized.";
-  LOGS(logger, VERBOSE) << "Model path: " << config.model_path;
-  auto status = env->GetSession()->Load(config.model_path);
-  LOGS(logger, VERBOSE) << "Load Model Status: " << status.Code() << " ---- Error: [" << status.ErrorMessage() << "]";
-
   auto const boost_address = boost::asio::ip::make_address(config.address);
 
-  hosting::App app(env);
+  hosting::App app{};
+
+  app.OnStart(
+      [&logger, &env, &config]() {
+        LOGS(logger, VERBOSE) << "Logging manager initialized.";
+        LOGS(logger, VERBOSE) << "Model path: " << config.model_path;
+        auto status = env->GetSession()->Load(config.model_path);
+        LOGS(logger, VERBOSE) << "Load Model Status: " << status.Code() << " ---- Error: [" << status.ErrorMessage() << "]";
+      });
+
   app.Post(R"(/v1/models/([^/:]+)(?:/versions/(\d+))?:(classify|regress|predict))",
-           [&env](const std::string& name, const std::string& version, const std::string& action, hosting::HttpContext& context) {
+           [env](const std::string& name, const std::string& version, const std::string& action, hosting::HttpContext& context) {
              hosting::Predict(name, version, action, context, env);
            });
 
