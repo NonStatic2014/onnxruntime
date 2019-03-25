@@ -43,6 +43,10 @@ int main(int argc, char* argv[]) {
                      hosting::Predict(name, version, action, context, env);
                    });
 
+  app.RegisterError([&env](const auto& details) -> void {
+      auto logger = env->GetLogger();
+  });
+
   app.Bind(boost_address, config.http_port)
       .NumThreads(config.num_http_threads)
       .Run();
