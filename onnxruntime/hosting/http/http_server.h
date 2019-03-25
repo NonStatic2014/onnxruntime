@@ -40,8 +40,8 @@ class App {
 
   App& Bind(net::ip::address address, unsigned short port);
   App& NumThreads(int threads);
-  App& OnStartup(const start_fn& fn);
-  App& OnPost(const std::string& route, const handler_fn& fn);
+  App& RegisterStartup(const start_fn& fn);
+  App& RegisterPost(const std::string& route, const handler_fn& fn);
   App& Run();
 
  private:

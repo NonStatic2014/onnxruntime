@@ -41,12 +41,12 @@ App& App::NumThreads(int threads) {
   return *this;
 }
 
-App& App::OnStartup(const start_fn& on_start) {
+App& App::RegisterStartup(const start_fn& on_start) {
   on_start_ = on_start;
   return *this;
 }
 
-App& App::OnPost(const std::string& route, const handler_fn& fn) {
+App& App::RegisterPost(const std::string& route, const handler_fn& fn) {
   routes_->RegisterController(http::verb::post, route, fn);
   return *this;
 }
