@@ -23,7 +23,7 @@ namespace beast = boost::beast;    // from <boost/beast.hpp>
 using tcp = boost::asio::ip::tcp;  // from <boost/asio/ip/tcp.hpp>
 namespace http = beast::http;
 
-using handler_fn = std::function<void(std::string, std::string, std::string, HttpContext&)>;
+using HandlerFn = std::function<void(std::string, std::string, std::string, HttpContext&)>;
 
 // An implementation of a single HTTP session
 // Used by a listener to hand off the work and async write back to a socket

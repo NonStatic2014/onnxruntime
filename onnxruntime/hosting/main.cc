@@ -32,13 +32,13 @@ int main(int argc, char* argv[]) {
   hosting::App app{};
 
   app.OnStartup(
-      [&env](const auto& details) {
+      [&env](const auto& details) -> void {
         auto logger = env->GetLogger();
         LOGS(logger, VERBOSE) << "Listening at: " << "http://" << details.address << ":" << details.port;
       });
 
   app.OnPost(R"(/v1/models/([^/:]+)(?:/versions/(\d+))?:(classify|regress|predict))",
-             [env](const auto& name, const auto& version, const auto& action, auto& context) {
+             [env](const auto& name, const auto& version, const auto& action, auto& context) -> void {
                hosting::Predict(name, version, action, context, env);
              });
 
