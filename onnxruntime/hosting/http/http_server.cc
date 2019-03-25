@@ -41,18 +41,19 @@ App& App::NumThreads(int threads) {
   return *this;
 }
 
-App& App::OnStartup(const StartFn& on_start) {
+App& App::RegisterStartup(const StartFn& on_start) {
   on_start_ = on_start;
   return *this;
 }
 
-App& App::OnPost(const std::string& route, const HandlerFn& fn) {
+App& App::RegisterPost(const std::string& route, const HandlerFn& fn) {
   routes_->RegisterController(http::verb::post, route, fn);
   return *this;
 }
 
-App& App::OnError(const ErrorFn& fn) {
+App& App::RegisterError(const ErrorFn& fn) {
   routes_->RegisterErrorCallback(fn);
+  return *this;
 }
 
 App& App::Run() {
