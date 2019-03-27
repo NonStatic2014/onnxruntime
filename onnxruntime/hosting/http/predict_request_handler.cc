@@ -8,11 +8,8 @@
 namespace onnxruntime {
 namespace hosting {
 
-void BadRequest(HttpContext& context, const std::string& error_message) {
-  auto json_error = R"({"error_code": 400, "error_message": )" + error_message + " }";
-
-  context.response.result(400);
-  context.response.body() = std::string(json_error);
+std::string BadRequest(const http::status error_code, const std::string& error_message, HttpContext& context) {
+  return "{\"error_code\": "  + std::to_string(int(error_code)) + ", \"error_message\": " + error_message + " }";
 }
 
 // TODO: decide whether this should be a class
@@ -32,7 +29,9 @@ void Predict(const std::string& name,
   auto status = GetRequestFromJson(body, predictRequest);
 
   if (!status.ok()) {
-    return BadRequest(context, status.error_message());
+    context.response.result(400);
+    context.response.body() = BadRequest(http::status::bad_request, status.error_message(), context);
+    return;
   }
 
   context.response.result(200);
