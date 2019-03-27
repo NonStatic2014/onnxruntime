@@ -32,14 +32,14 @@ int main(int argc, char* argv[]) {
   hosting::App app{};
 
   app.RegisterStartup(
-      [&env](const auto& details) -> void {
+      [env](const auto& details) -> void {
         auto logger = env->GetLogger();
         LOGS(logger, VERBOSE) << "Listening at: "
                               << "http://" << details.address << ":" << details.port;
       });
 
   app.RegisterError(
-      [&env](auto& context) -> void {
+      [env](auto& context) -> void {
         auto logger = env->GetLogger();
         LOGS(logger, VERBOSE) << "Error code: " << context.error_code;
         LOGS(logger, VERBOSE) << "Error message: " << context.error_message;
@@ -48,10 +48,11 @@ int main(int argc, char* argv[]) {
         context.response.body() = hosting::CreateJsonError(context.error_code, context.error_message);
       });
 
-  app.RegisterPost(R"(/v1/models/([^/:]+)(?:/versions/(\d+))?:(classify|regress|predict))",
-                   [env](const auto& name, const auto& version, const auto& action, auto& context) -> void {
-                     hosting::Predict(name, version, action, context, env);
-                   });
+  app.RegisterPost(
+      R"(/v1/models/([^/:]+)(?:/versions/(\d+))?:(classify|regress|predict))",
+      [env](const auto& name, const auto& version, const auto& action, auto& context) -> void {
+        hosting::Predict(name, version, action, context, env);
+      });
 
   app.Bind(boost_address, config.http_port)
       .NumThreads(config.num_http_threads)
