@@ -13,7 +13,7 @@ namespace hosting {
 
 namespace http = boost::beast::http;  // from <boost/beast/http.hpp>
 
-using HandlerFn = std::function<void(std::string, std::string, std::string, HttpContext&)>;
+using HandlerFn = std::function<void(std::string&, std::string&, std::string&, HttpContext&)>;
 using ErrorFn = std::function<void(HttpContext&)>;
 
 // This class maintains two lists of regex -> function lists. One for POST requests and one for GET requests
@@ -21,6 +21,7 @@ using ErrorFn = std::function<void(HttpContext&)>;
 class Routes {
  public:
   Routes() = default;
+  ErrorFn on_error;
   bool RegisterController(http::verb method, const std::string& url_pattern, const HandlerFn& controller);
   bool RegisterErrorCallback(const ErrorFn& controller);
 
@@ -34,7 +35,6 @@ class Routes {
  private:
   std::vector<std::pair<std::string, HandlerFn>> post_fn_table;
   std::vector<std::pair<std::string, HandlerFn>> get_fn_table;
-  ErrorFn on_error;
 };
 
 }  //namespace hosting

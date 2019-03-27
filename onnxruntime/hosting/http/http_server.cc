@@ -22,8 +22,6 @@ using tcp = boost::asio::ip::tcp;     // from <boost/asio/ip/tcp.hpp>
 namespace onnxruntime {
 namespace hosting {
 
-using HandlerFn = std::function<void(std::string, std::string, std::string, HttpContext&)>;
-
 App::App() {
   http_details.address = boost::asio::ip::make_address_v4("0.0.0.0");
   http_details.port = 8001;

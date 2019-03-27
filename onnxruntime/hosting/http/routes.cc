@@ -12,8 +12,6 @@ namespace hosting {
 
 namespace http = boost::beast::http;  // from <boost/beast/http.hpp>
 
-using HandlerFn = std::function<void(std::string, std::string, std::string, HttpContext&)>;
-
 bool Routes::RegisterController(http::verb method, const std::string& url_pattern, const HandlerFn& controller) {
   if (controller == nullptr) {
     return false;
@@ -55,7 +53,6 @@ http::status Routes::ParseUrl(http::verb method,
       func_table = this->post_fn_table;
       break;
     default:
-      std::cout << "Unsupported method: [" << method << "]" << std::endl;
       return http::status::method_not_allowed;
   }
 

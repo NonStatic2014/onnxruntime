@@ -23,8 +23,6 @@ namespace beast = boost::beast;    // from <boost/beast.hpp>
 using tcp = boost::asio::ip::tcp;  // from <boost/asio/ip/tcp.hpp>
 namespace http = beast::http;
 
-using HandlerFn = std::function<void(std::string, std::string, std::string, HttpContext&)>;
-
 // An implementation of a single HTTP session
 // Used by a listener to hand off the work and async write back to a socket
 class HttpSession : public std::enable_shared_from_this<HttpSession> {
@@ -59,6 +57,9 @@ class HttpSession : public std::enable_shared_from_this<HttpSession> {
   // Should set the response before calling Send
   template <typename Body, typename Allocator>
   void HandleRequest(http::request<Body, http::basic_fields<Allocator>>&& req);
+
+  // Execute user function, handle errors
+  http::status ExecuteUserFunction(HttpContext& context);
 
   // Asynchronously reads the request from the socket
   void DoRead();

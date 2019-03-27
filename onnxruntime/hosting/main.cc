@@ -38,14 +38,17 @@ int main(int argc, char* argv[]) {
                               << "http://" << details.address << ":" << details.port;
       });
 
+  app.RegisterError(
+      [&env](const auto& context) -> void {
+        auto logger = env->GetLogger();
+        LOGS(logger, VERBOSE) << "An error occurred. Error code: " << context.error_code << " . Error message: " << context.error_message;
+        // TODO create JSON response
+      });
+
   app.RegisterPost(R"(/v1/models/([^/:]+)(?:/versions/(\d+))?:(classify|regress|predict))",
                    [env](const auto& name, const auto& version, const auto& action, auto& context) -> void {
                      hosting::Predict(name, version, action, context, env);
                    });
-
-  app.RegisterError([&env](const auto& details) -> void {
-      auto logger = env->GetLogger();
-  });
 
   app.Bind(boost_address, config.http_port)
       .NumThreads(config.num_http_threads)
