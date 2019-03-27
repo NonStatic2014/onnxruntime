@@ -116,8 +116,11 @@ http::status HttpSession::ExecuteUserFunction(HttpContext& context) {
 
   if (status != http::status::ok) {
     context.error_code = status;
-    std::string method_str = std::string(http::to_string(context.request.method()));
-    context.error_message = "Path not found with method: " + method_str + " and path: " + context.request.target().to_string();
+    context.error_message = std::string(http::obsolete_reason(status)) +
+                            ". For HTTP method: " +
+                            std::string(http::to_string(context.request.method())) +
+                            " and request path: " +
+                            context.request.target().to_string();
     return status;
   }
 
