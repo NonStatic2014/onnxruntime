@@ -8,10 +8,6 @@
 namespace onnxruntime {
 namespace hosting {
 
-std::string BadRequest(const http::status error_code, const std::string& error_message, HttpContext& context) {
-  return "{\"error_code\": "  + std::to_string(int(error_code)) + ", \"error_message\": " + error_message + " }";
-}
-
 // TODO: decide whether this should be a class
 void Predict(const std::string& name,
              const std::string& version,
@@ -30,7 +26,7 @@ void Predict(const std::string& name,
 
   if (!status.ok()) {
     context.response.result(400);
-    context.response.body() = BadRequest(http::status::bad_request, status.error_message(), context);
+    context.response.body() = CreateJsonError(http::status::bad_request, status.error_message());
     return;
   }
 

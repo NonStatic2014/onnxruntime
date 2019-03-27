@@ -39,10 +39,12 @@ int main(int argc, char* argv[]) {
       });
 
   app.RegisterError(
-      [&env](const auto& context) -> void {
+      [&env](auto& context) -> void {
         auto logger = env->GetLogger();
         LOGS(logger, VERBOSE) << "An error occurred. Error code: " << context.error_code << " . Error message: " << context.error_message;
-        // TODO create JSON response
+
+        context.response.result(400);
+        context.response.body() = hosting::CreateJsonError(context.error_code, context.error_message);
       });
 
   app.RegisterPost(R"(/v1/models/([^/:]+)(?:/versions/(\d+))?:(classify|regress|predict))",

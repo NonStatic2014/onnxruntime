@@ -31,5 +31,9 @@ protobufutil::Status GenerateResponseInJson(onnxruntime::hosting::PredictRespons
   return result;
 }
 
+std::string CreateJsonError(const http::status error_code, const std::string& error_message) {
+  return "{\"error_code\": " + std::to_string(int(error_code)) + ", \"error_message\": " + error_message + " }";
+}
+
 }  // namespace hosting
 }  // namespace onnxruntime
