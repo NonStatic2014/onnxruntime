@@ -41,9 +41,10 @@ int main(int argc, char* argv[]) {
   app.RegisterError(
       [&env](auto& context) -> void {
         auto logger = env->GetLogger();
-        LOGS(logger, VERBOSE) << "An error occurred. Error code: " << context.error_code << " . Error message: " << context.error_message;
+        LOGS(logger, VERBOSE) << "Error code: " << context.error_code;
+        LOGS(logger, VERBOSE) << "Error message: " << context.error_message;
 
-        context.response.result(400);
+        context.response.result(context.error_code);
         context.response.body() = hosting::CreateJsonError(context.error_code, context.error_message);
       });
 

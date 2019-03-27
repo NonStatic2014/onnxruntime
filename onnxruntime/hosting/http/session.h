@@ -52,13 +52,14 @@ class HttpSession : public std::enable_shared_from_this<HttpSession> {
   template <class Msg>
   void Send(Msg&& msg);
 
-  // Handle the request and hand it off to the user's function
   // Called after the session is finished reading the message
   // Should set the response before calling Send
   template <typename Body, typename Allocator>
   void HandleRequest(http::request<Body, http::basic_fields<Allocator>>&& req);
 
+  // Handle the request and hand it off to the user's function
   // Execute user function, handle errors
+  // HttpContext parameter can be updated here or in HandleRequest
   http::status ExecuteUserFunction(HttpContext& context);
 
   // Asynchronously reads the request from the socket
