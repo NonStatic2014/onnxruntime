@@ -22,10 +22,10 @@ int main(int argc, char* argv[]) {
 
   auto env = std::make_shared<hosting::HostingEnvironment>();
   auto logger = env->GetLogger();
-  LOGS(logger, VERBOSE) << "Logging manager initialized.";
-  LOGS(logger, VERBOSE) << "Model path: " << config.model_path;
+  LOGS(*logger, VERBOSE) << "Logging manager initialized.";
+  LOGS(*logger, VERBOSE) << "Model path: " << config.model_path;
   auto status = env->GetSession()->Load(config.model_path);
-  LOGS(logger, VERBOSE) << "Load Model Status: " << status.Code() << " ---- Error: [" << status.ErrorMessage() << "]";
+  LOGS(*logger, VERBOSE) << "Load Model Status: " << status.Code() << " ---- Error: [" << status.ErrorMessage() << "]";
 
   auto const boost_address = boost::asio::ip::make_address(config.address);
 
@@ -34,15 +34,15 @@ int main(int argc, char* argv[]) {
   app.RegisterStartup(
       [env](const auto& details) -> void {
         auto logger = env->GetLogger();
-        LOGS(logger, VERBOSE) << "Listening at: "
+        LOGS(*logger, VERBOSE) << "Listening at: "
                               << "http://" << details.address << ":" << details.port;
       });
 
   app.RegisterError(
       [env](auto& context) -> void {
         auto logger = env->GetLogger();
-        LOGS(logger, VERBOSE) << "Error code: " << context.error_code;
-        LOGS(logger, VERBOSE) << "Error message: " << context.error_message;
+        LOGS(*logger, VERBOSE) << "Error code: " << context.error_code;
+        LOGS(*logger, VERBOSE) << "Error message: " << context.error_message;
 
         context.response.result(context.error_code);
         context.response.body() = hosting::CreateJsonError(context.error_code, context.error_message);

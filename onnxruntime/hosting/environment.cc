@@ -23,8 +23,8 @@ HostingEnvironment::HostingEnvironment() : logger_id_("HostingLog"),
   session_ = std::make_shared<onnxruntime::InferenceSession>(options_, &default_logging_manager_);
 }
 
-const onnxruntime::logging::Logger& HostingEnvironment::GetLogger() {
-  return this->default_logging_manager_.DefaultLogger();
+std::shared_ptr<onnxruntime::logging::Logger> HostingEnvironment::GetLogger() {
+  return this->default_logging_manager_.CreateLogger("1234");
 }
 
 std::shared_ptr<onnxruntime::InferenceSession> HostingEnvironment::GetSession() const {
