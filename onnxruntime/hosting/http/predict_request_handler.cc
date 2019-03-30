@@ -15,7 +15,7 @@ void Predict(const std::string& name,
              HttpContext& context,
              std::shared_ptr<HostingEnvironment> env) {
   PredictRequest predictRequest{};
-  auto logger = env->GetLogger();
+  auto logger = env->GetLogger(context.uuid);
 
   LOGS(*logger, VERBOSE) << "Name: " << name;
   LOGS(*logger, VERBOSE) << "Version: " << version;
