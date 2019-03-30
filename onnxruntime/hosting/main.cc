@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
       [env](const auto& details) -> void {
         auto logger = env->GetDefaultLogger();
         LOGS(logger, VERBOSE) << "Listening at: "
-                               << "http://" << details.address << ":" << details.port;
+                              << "http://" << details.address << ":" << details.port;
       });
 
   app.RegisterError(
