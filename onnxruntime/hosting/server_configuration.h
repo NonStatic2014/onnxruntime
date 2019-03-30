@@ -12,9 +12,9 @@
 namespace onnxruntime {
 namespace hosting {
 
-enum Result { ExitSuccess = 1,
-              ExitFailure,
-              ContinueSuccess };
+enum class Result { ExitSuccess = 1,
+                    ExitFailure,
+                    ContinueSuccess };
 
 namespace po = boost::program_options;
 
