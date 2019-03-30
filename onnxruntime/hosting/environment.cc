@@ -10,10 +10,10 @@
 namespace onnxruntime {
 namespace hosting {
 
-HostingEnvironment::HostingEnvironment() : logger_id_("HostingLog"),
+HostingEnvironment::HostingEnvironment(onnxruntime::logging::Severity severity) : logger_id_("HostingLog"),
                                            default_logging_manager_(
                                                std::unique_ptr<onnxruntime::logging::ISink>{&sink_},
-                                               onnxruntime::logging::Severity::kVERBOSE,
+                                               severity,
                                                /* default_filter_user_data */ false,
                                                onnxruntime::logging::LoggingManager::InstanceType::Default,
                                                &logger_id_) {

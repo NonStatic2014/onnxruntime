@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
     exit(EXIT_FAILURE);
   }
 
-  auto env = std::make_shared<hosting::HostingEnvironment>();
+  auto env = std::make_shared<hosting::HostingEnvironment>(config.logging_level);
   auto logger = env->GetDefaultLogger();
   LOGS(logger, VERBOSE) << "Logging manager initialized.";
   LOGS(logger, VERBOSE) << "Model path: " << config.model_path;
