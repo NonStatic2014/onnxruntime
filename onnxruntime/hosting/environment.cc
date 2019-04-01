@@ -5,7 +5,6 @@
 #include "core/common/logging/logging.h"
 
 #include "environment.h"
-#include "log_sink.h"
 
 namespace onnxruntime {
 namespace hosting {

@@ -5,14 +5,21 @@
 #define ONNXRUNTIME_HOSTING_ENVIRONMENT_H
 
 #include <memory>
+#include <iostream>
 
-#include "core/framework/environment.h"
 #include "core/common/logging/logging.h"
+#include "core/common/logging/sinks/ostream_sink.h"
+#include "core/framework/environment.h"
 #include "core/session/inference_session.h"
-#include "log_sink.h"
 
 namespace onnxruntime {
 namespace hosting {
+
+class LogSink : public onnxruntime::logging::OStreamSink {
+ public:
+  LogSink() : OStreamSink(std::cout, /*flush*/ true) {
+  }
+};
 
 class HostingEnvironment {
  public:

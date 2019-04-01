@@ -28,15 +28,12 @@ set(re2_src ${REPO_ROOT}/cmake/external/re2)
 
 # Setup source code
 file(GLOB_RECURSE onnxruntime_hosting_lib_srcs
-  "${ONNXRUNTIME_ROOT}/hosting/http/*.cc"
   "${ONNXRUNTIME_ROOT}/hosting/environment.cc"
   "${ONNXRUNTIME_ROOT}/hosting/executor.cc"
   "${ONNXRUNTIME_ROOT}/hosting/converter.cc"
 )
 if(NOT WIN32)
   if(HAS_UNUSED_PARAMETER)
-    set_source_files_properties(${ONNXRUNTIME_ROOT}/hosting/http/json_handling.cc PROPERTIES COMPILE_FLAGS -Wno-unused-parameter)
-    set_source_files_properties(${ONNXRUNTIME_ROOT}/hosting/http/predict_request_handler.cc PROPERTIES COMPILE_FLAGS -Wno-unused-parameter)
     set_source_files_properties(${ONNXRUNTIME_ROOT}/hosting/executor.cc PROPERTIES COMPILE_FLAGS -Wno-unused-parameter)
     set_source_files_properties(${ONNXRUNTIME_ROOT}/hosting/converter.cc PROPERTIES COMPILE_FLAGS -Wno-unused-parameter)
   endif()
@@ -53,7 +50,6 @@ target_include_directories(onnxruntime_hosting_lib PRIVATE
   ${ONNXRUNTIME_ROOT}
   ${CMAKE_CURRENT_BINARY_DIR}/onnx
   ${ONNXRUNTIME_ROOT}/hosting
-  ${ONNXRUNTIME_ROOT}/hosting/http
   PUBLIC
   ${Boost_INCLUDE_DIR}
   ${re2_src}
@@ -91,7 +87,6 @@ onnxruntime_add_include_to_target(${PROJECT_NAME} onnxruntime_session onnxruntim
 
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${ONNXRUNTIME_ROOT}
-    ${ONNXRUNTIME_ROOT}/hosting/http
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
