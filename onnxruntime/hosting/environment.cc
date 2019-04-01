@@ -10,7 +10,7 @@
 namespace onnxruntime {
 namespace hosting {
 
-HostingEnvironment::HostingEnvironment(onnxruntime::logging::Severity severity) : logger_id_("HostingLog"),
+HostingEnvironment::HostingEnvironment(onnxruntime::logging::Severity severity) : logger_id_("HostingApp"),
                                            default_logging_manager_(
                                                std::unique_ptr<onnxruntime::logging::ISink>{&sink_},
                                                severity,
