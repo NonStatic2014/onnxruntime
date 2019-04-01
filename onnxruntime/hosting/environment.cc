@@ -11,12 +11,12 @@ namespace onnxruntime {
 namespace hosting {
 
 HostingEnvironment::HostingEnvironment(onnxruntime::logging::Severity severity) : logger_id_("HostingApp"),
-                                           default_logging_manager_(
-                                               std::unique_ptr<onnxruntime::logging::ISink>{&sink_},
-                                               severity,
-                                               /* default_filter_user_data */ false,
-                                               onnxruntime::logging::LoggingManager::InstanceType::Default,
-                                               &logger_id_) {
+                                                                                  default_logging_manager_(
+                                                                                      std::unique_ptr<onnxruntime::logging::ISink>{&sink_},
+                                                                                      severity,
+                                                                                      /* default_filter_user_data */ false,
+                                                                                      onnxruntime::logging::LoggingManager::InstanceType::Default,
+                                                                                      &logger_id_) {
   auto status = onnxruntime::Environment::Create(this->runtime_environment_);
 
   // The session initialization MUST BE AFTER environment creation
@@ -28,6 +28,10 @@ const onnxruntime::logging::Logger& HostingEnvironment::GetAppLogger() {
 }
 
 std::shared_ptr<onnxruntime::logging::Logger> HostingEnvironment::GetLogger(const std::string& id) {
+  if (id.empty()) {
+    LOGS(GetAppLogger(), VERBOSE) << "Request id is null or empty string";
+  }
+
   return this->default_logging_manager_.CreateLogger(id);
 }
 
