@@ -21,7 +21,7 @@ class HostingEnvironment {
   ~HostingEnvironment() = default;
   HostingEnvironment(const HostingEnvironment&) = delete;
 
-  const onnxruntime::logging::Logger& GetDefaultLogger();
+  const onnxruntime::logging::Logger& GetAppLogger();
   std::shared_ptr<onnxruntime::logging::Logger> GetLogger(const std::string& id);
   std::shared_ptr<onnxruntime::InferenceSession> GetSession() const;
 

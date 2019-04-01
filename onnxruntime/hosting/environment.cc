@@ -23,7 +23,7 @@ HostingEnvironment::HostingEnvironment(onnxruntime::logging::Severity severity) 
   session_ = std::make_shared<onnxruntime::InferenceSession>(options_, &default_logging_manager_);
 }
 
-const onnxruntime::logging::Logger& HostingEnvironment::GetDefaultLogger() {
+const onnxruntime::logging::Logger& HostingEnvironment::GetAppLogger() {
   return this->default_logging_manager_.DefaultLogger();
 }
 
