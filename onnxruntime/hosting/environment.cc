@@ -29,7 +29,7 @@ const onnxruntime::logging::Logger& HostingEnvironment::GetAppLogger() {
 
 std::shared_ptr<onnxruntime::logging::Logger> HostingEnvironment::GetLogger(const std::string& id) {
   if (id.empty()) {
-    LOGS(GetAppLogger(), VERBOSE) << "Request id is null or empty string";
+    LOGS(GetAppLogger(), WARNING) << "Request id is null or empty string";
   }
 
   return this->default_logging_manager_.CreateLogger(id);
