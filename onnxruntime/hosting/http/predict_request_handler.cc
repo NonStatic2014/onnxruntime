@@ -17,9 +17,7 @@ void Predict(const std::string& name,
   PredictRequest predictRequest{};
   auto logger = env->GetLogger(context.uuid);
 
-  LOGS(*logger, VERBOSE) << "Name: " << name;
-  LOGS(*logger, VERBOSE) << "Version: " << version;
-  LOGS(*logger, VERBOSE) << "Action: " << action;
+  LOGS(*logger, VERBOSE) << "Name: " << name << " Version: " << version  << " Action: " << action;
 
   auto body = context.request.body();
   auto status = GetRequestFromJson(body, predictRequest);
