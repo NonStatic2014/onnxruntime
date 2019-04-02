@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+#include <iostream>
 #include "core/framework/tensorprotoutils.h"
 
 #include <memory>
@@ -79,7 +80,6 @@ static Status UnpackTensorWithRawData(const void* raw_data, size_t raw_data_leng
   }
 }
 }  // namespace
-
 
 namespace onnxruntime {
 namespace utils {
@@ -285,7 +285,6 @@ std::vector<int64_t> GetTensorShapeFromTensorShapeProto(const ONNX_NAMESPACE::Te
   return tensor_shape_vec;
 }
 
-
 struct UnInitializeParam {
   void* preallocated;
   size_t preallocated_size;
@@ -393,7 +392,7 @@ Status TensorProtoToMLValue(const Env& env, const ORTCHAR_T* tensor_proto_path,
       {
         void* file_data;
         ORT_RETURN_IF_ERROR(env.ReadFileAsString(full_path.c_str(), external_data_info->GetOffset(),
-            file_data, raw_data_len, deleter_for_file_data.d));
+                                                 file_data, raw_data_len, deleter_for_file_data.d));
         raw_data = file_data;
       }
     } else if (tensor_proto.has_raw_data()) {
@@ -464,6 +463,14 @@ Status TensorProtoToMLValue(const Env& env, const ORTCHAR_T* tensor_proto_path,
         }
       }
       tensor_data = preallocated;
+
+      std::cout << "%%%%%%%%%%%%%%%%%%%%" << std::endl;
+      float* fdata = (float*)preallocated;
+      for (int i = 0; i < 10; i++) {
+        std::cout << fdata[i] << " ";
+      }
+      std::cout << std::endl;
+      std::cout << "%%%%%%%%%%%%%%%%%%%%" << std::endl;
     }
   }
   std::vector<int64_t> tensor_shape_vec = GetTensorShapeFromTensorProto(tensor_proto);
@@ -471,6 +478,7 @@ Status TensorProtoToMLValue(const Env& env, const ORTCHAR_T* tensor_proto_path,
   TensorShape tensor_shape{tensor_shape_vec};
   value.Init(new Tensor(type, tensor_shape, tensor_data, allocator), DataTypeImpl::GetType<Tensor>(),
              DataTypeImpl::GetType<Tensor>()->GetDeleteFunc());
+
   return Status::OK();
 }
 
