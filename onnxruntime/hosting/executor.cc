@@ -191,7 +191,7 @@ protobufutil::Status Executor::Predict(const std::string& model_name, const std:
   // (975.6701049804688, -618.7239379882812, 6574.568359375, 668.0289306640625, -917.2709350585938, -1671.6358642578125, -1952.7598876953125, -61.54987335205078, -777.1766357421875, -1439.5316162109375)
   std::cout << "+++++++++nnnnn++++++++" << std::endl;
   const auto& otensor = outputs[0].Get<onnxruntime::Tensor>();
-  const auto* datao = tensor.Data<float>();
+  const auto* datao = otensor.Data<float>();
   for (size_t i = 0; i < otensor.Size() / sizeof(float); i++) {
     std::cout << datao[i] << "  ";
   }
