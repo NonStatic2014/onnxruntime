@@ -17,7 +17,9 @@ class Executor {
   explicit Executor(std::shared_ptr<HostingEnvironment> hosting_env) : env_(std::move(hosting_env)) {}
 
   // Prediction method
-  google::protobuf::util::Status Predict(const std::string& model_name, const std::string& model_version, const std::string& request_id,
+  google::protobuf::util::Status Predict(const std::string& model_name,
+                                         const std::string& model_version,
+                                         const std::string& request_id,
                                          onnxruntime::hosting::PredictRequest& request,
                                          /* out */ onnxruntime::hosting::PredictResponse& response);
 

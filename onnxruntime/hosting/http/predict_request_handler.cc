@@ -43,7 +43,7 @@ void Predict(const std::string& name,
 
   Executor executor(env);
   PredictResponse predictResponse{};
-  status = executor.Predict(name, version, "request_id", predictRequest, predictResponse);
+  status = executor.Predict(name, version, context.uuid, predictRequest, predictResponse);
   if (!status.ok()) {
     GenerateErrorResponse(logger, GetHttpStatusCode((status)), status, context);
     return;
