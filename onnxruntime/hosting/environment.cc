@@ -5,16 +5,17 @@
 #include "core/common/logging/logging.h"
 
 #include "environment.h"
-#include "log_sink.h"
 
 namespace onnxruntime {
 namespace hosting {
 
-HostingEnvironment::HostingEnvironment(onnxruntime::logging::Severity severity) : logger_id_("HostingApp"),
+HostingEnvironment::HostingEnvironment(onnxruntime::logging::Severity severity) : severity_(severity),
+                                                                                  default_filter_user_data_(false),
+                                                                                  logger_id_("HostingApp"),
                                                                                   default_logging_manager_(
                                                                                       std::unique_ptr<onnxruntime::logging::ISink>{&sink_},
                                                                                       severity,
-                                                                                      /* default_filter_user_data */ false,
+                                                                                      default_filter_user_data_,
                                                                                       onnxruntime::logging::LoggingManager::InstanceType::Default,
                                                                                       &logger_id_) {
   auto status = onnxruntime::Environment::Create(this->runtime_environment_);
@@ -32,11 +33,15 @@ std::shared_ptr<onnxruntime::logging::Logger> HostingEnvironment::GetLogger(cons
     LOGS(GetAppLogger(), WARNING) << "Request id is null or empty string";
   }
 
-  return this->default_logging_manager_.CreateLogger(id);
+  return this->default_logging_manager_.CreateLogger(id, severity_, default_filter_user_data_);
 }
 
 std::shared_ptr<onnxruntime::InferenceSession> HostingEnvironment::GetSession() const {
   return this->session_;
+}
+
+onnxruntime::logging::Severity HostingEnvironment::GetSeverity() const {
+  return severity_;
 }
 
 }  // namespace hosting

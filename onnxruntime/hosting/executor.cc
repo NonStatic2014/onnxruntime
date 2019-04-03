@@ -41,7 +41,7 @@ protobufutil::Status Executor::SetMLValue(const onnx::TensorProto& input_tensor,
                                                          ml_value, deleter);
   if (!status.IsOK()) {
     LOGS(*logger, ERROR) << "TensorProtoToMLValue() failed." << " Message: " << status.ErrorMessage();
-    return GenerateProtoBufStatus(status, "TensorProtoToMLValue() FAILED:" + status.ErrorMessage());
+    return GenerateProtoBufStatus(status, "TensorProtoToMLValue() failed:" + status.ErrorMessage());
   }
 
   return protobufutil::Status::OK;
@@ -79,9 +79,10 @@ protobufutil::Status Executor::Predict(const std::string& model_name,
                                        /* out */ onnxruntime::hosting::PredictResponse& response) {
   auto logger = env_->GetLogger(request_id_);
 
+  // Convert PredictRequest to NameMLValMap
   onnxruntime::NameMLValMap name_ml_value_map{};
   auto conversion_status = SetNameMLValueMap(name_ml_value_map, request);
-  
+
   if (conversion_status != protobufutil::Status::OK) {
     return conversion_status;
   }
@@ -93,9 +94,8 @@ protobufutil::Status Executor::Predict(const std::string& model_name,
   }
   std::vector<onnxruntime::MLValue> outputs(output_names.size());
 
-  // Run()!
+  // Run
   OrtRunOptions run_options{};
-  run_options.run_log_verbosity_level = 4;  // TODO: respect user selected log level
   run_options.run_tag = request_id_;
 
   auto status = env_->GetSession()->Run(run_options, name_ml_value_map, output_names, &outputs);
