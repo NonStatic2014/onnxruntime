@@ -17,6 +17,7 @@
 
 #include "converter.h"
 #include "executor.h"
+#include "util.h"
 
 namespace onnxruntime {
 namespace hosting {
@@ -38,9 +39,8 @@ protobufutil::Status Executor::SetMLValue(const onnx::TensorProto& input_tensor,
                                                          onnxruntime::MemBuffer(data.release(), cpu_tensor_length, *cpu_allocator_info),
                                                          ml_value, deleter);
   if (!status.IsOK()) {
-    LOGS(*logger, ERROR) << "TensorProtoToMLValue() failed! Input name: " << ". Message: " << status.ErrorMessage();
-    return protobufutil::Status(static_cast<protobufutil::error::Code>(status.Code()),
-                                "TensorProtoToMLValue() failed: " + status.ErrorMessage());
+    LOGS(*logger, ERROR) << "TensorProtoToMLValue() failed." << " Message: " << status.ErrorMessage();
+    return GenerateProtoBufStatus(status, "TensorProtoToMLValue() FAILED:" + status.ErrorMessage());
   }
 
   return protobufutil::Status::OK;
@@ -65,14 +65,15 @@ protobufutil::Status Executor::Predict(const std::string& model_name,
 
   // Prepare the MLValue object
   for (const auto& input : request.inputs()) {
-    std::string input_name = input.first;
-    onnx::TensorProto input_tensor = input.second;
-    using_raw_data = using_raw_data && input_tensor.has_raw_data();
+    using_raw_data = using_raw_data && input.second.has_raw_data();
 
     MLValue ml_value;
-    auto status = SetMLValue(input_tensor, logger, cpu_allocator_info, ml_value);
+    auto status = SetMLValue(input.second, logger, cpu_allocator_info, ml_value);
+    if (status != protobufutil::Status::OK) {
+      return status;
+    }
 
-    name_ml_value_map.insert(std::make_pair(input_name, ml_value));
+    name_ml_value_map.insert(std::make_pair(input.first, ml_value));
   }
 
   // Prepare the output names and vector
@@ -89,11 +90,8 @@ protobufutil::Status Executor::Predict(const std::string& model_name,
 
   auto status = env_->GetSession()->Run(run_options, name_ml_value_map, output_names, &outputs);
   if (!status.IsOK()) {
-    LOGS(*logger, ERROR) << "Run() failed!"
-                         << " Error code: " << status.Code()
-                         << ". Error Message: " << status.ErrorMessage();
-    return protobufutil::Status(static_cast<protobufutil::error::Code>(status.Code()),
-                                "Run() failed!" + status.ErrorMessage());
+    LOGS(*logger, ERROR) << "Run() failed." << ". Error Message: " << status.ErrorMessage();
+    return GenerateProtoBufStatus(status, "Run() failed: " + status.ErrorMessage());
   }
 
   // Build the response
@@ -101,10 +99,9 @@ protobufutil::Status Executor::Predict(const std::string& model_name,
     onnx::TensorProto output_tensor{};
     status = MLValueToTensorProto(outputs[i], using_raw_data, logger, output_tensor);
     if (!status.IsOK()) {
-      LOGS(*logger, ERROR) << "MLValue2TensorProto() failed! Output name: " << output_names[i]
-                           << " Error code: " << status.Code()
+      LOGS(*logger, ERROR) << "MLValueToTensorProto() failed! Output name: " << output_names[i]
                            << ". Error Message: " << status.ErrorMessage();
-      return protobufutil::Status(static_cast<protobufutil::error::Code>(status.Code()), "MLValue2TensorProto() failed!");
+      return GenerateProtoBufStatus(status, "MLValueToTensorProto() failed: " + status.ErrorMessage());
     }
 
     response.mutable_outputs()->insert({output_names[i], output_tensor});
