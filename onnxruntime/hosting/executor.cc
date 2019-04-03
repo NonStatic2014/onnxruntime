@@ -47,14 +47,8 @@ protobufutil::Status Executor::SetMLValue(const onnx::TensorProto& input_tensor,
   return protobufutil::Status::OK;
 }
 
-protobufutil::Status Executor::Predict(const std::string& model_name,
-                                       const std::string& model_version,
-                                       onnxruntime::hosting::PredictRequest& request,
-                                       /* out */ onnxruntime::hosting::PredictResponse& response) {
-  bool using_raw_data = true;
+protobufutil::Status Executor::SetNameMLValueMap(onnxruntime::NameMLValMap& name_value_map, const onnxruntime::hosting::PredictRequest& request) {
   auto logger = env_->GetLogger(request_id_);
-
-  onnxruntime::NameMLValMap name_ml_value_map{};
 
   OrtAllocatorInfo* cpu_allocator_info = nullptr;
   auto ort_status = OrtCreateAllocatorInfo("Cpu", OrtDeviceAllocator, 0, OrtMemTypeDefault, &cpu_allocator_info);
@@ -73,7 +67,23 @@ protobufutil::Status Executor::Predict(const std::string& model_name,
       return status;
     }
 
-    name_ml_value_map.insert(std::make_pair(input.first, ml_value));
+    name_value_map.insert(std::make_pair(input.first, ml_value));
+  }
+
+  return protobufutil::Status::OK;
+}
+
+protobufutil::Status Executor::Predict(const std::string& model_name,
+                                       const std::string& model_version,
+                                       onnxruntime::hosting::PredictRequest& request,
+                                       /* out */ onnxruntime::hosting::PredictResponse& response) {
+  auto logger = env_->GetLogger(request_id_);
+
+  onnxruntime::NameMLValMap name_ml_value_map{};
+  auto conversion_status = SetNameMLValueMap(name_ml_value_map, request);
+  
+  if (conversion_status != protobufutil::Status::OK) {
+    return conversion_status;
   }
 
   // Prepare the output names and vector
@@ -89,6 +99,7 @@ protobufutil::Status Executor::Predict(const std::string& model_name,
   run_options.run_tag = request_id_;
 
   auto status = env_->GetSession()->Run(run_options, name_ml_value_map, output_names, &outputs);
+
   if (!status.IsOK()) {
     LOGS(*logger, ERROR) << "Run() failed." << ". Error Message: " << status.ErrorMessage();
     return GenerateProtoBufStatus(status, "Run() failed: " + status.ErrorMessage());
