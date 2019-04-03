@@ -16,6 +16,11 @@ class Executor {
  public:
   explicit Executor(std::shared_ptr<HostingEnvironment> hosting_env) : env_(std::move(hosting_env)) {}
 
+  google::protobuf::util::Status SetMLValue(const onnx::TensorProto& input_tensor,
+                                            std::shared_ptr<onnxruntime::logging::Logger> logger,
+                                            OrtAllocatorInfo* cpu_allocator_info,
+                                            /* out */ MLValue& ml_value);
+
   // Prediction method
   google::protobuf::util::Status Predict(const std::string& model_name,
                                          const std::string& model_version,
