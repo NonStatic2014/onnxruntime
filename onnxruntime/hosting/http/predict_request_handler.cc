@@ -30,7 +30,7 @@ void Predict(const std::string& name,
              const std::string& action,
              /* in, out */ HttpContext& context,
              std::shared_ptr<HostingEnvironment> env) {
-  auto logger = env->GetLogger(context.uuid);
+  auto logger = env->GetLogger(context.request_id);
   LOGS(*logger, VERBOSE) << "Name: " << name << " Version: " << version << " Action: " << action;
 
   auto body = context.request.body();
@@ -41,9 +41,9 @@ void Predict(const std::string& name,
     return;
   }
 
-  Executor executor(env);
+  Executor executor(env, context.request_id);
   PredictResponse predictResponse{};
-  status = executor.Predict(name, version, context.uuid, predictRequest, predictResponse);
+  status = executor.Predict(name, version, predictRequest, predictResponse);
   if (!status.ok()) {
     GenerateErrorResponse(logger, GetHttpStatusCode((status)), status, context);
     return;

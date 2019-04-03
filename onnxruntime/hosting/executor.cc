@@ -25,9 +25,10 @@ namespace hosting {
 namespace protobufutil = google::protobuf::util;
 
 protobufutil::Status Executor::SetMLValue(const onnx::TensorProto& input_tensor,
-                            std::shared_ptr<onnxruntime::logging::Logger> logger,
                             OrtAllocatorInfo* cpu_allocator_info,
                             /* out */ MLValue& ml_value) {
+  auto logger = env_->GetLogger(request_id_);
+
   size_t cpu_tensor_length = 0;
   onnxruntime::utils::GetSizeInBytesFromTensorProto<0>(input_tensor, &cpu_tensor_length);
 
@@ -48,11 +49,10 @@ protobufutil::Status Executor::SetMLValue(const onnx::TensorProto& input_tensor,
 
 protobufutil::Status Executor::Predict(const std::string& model_name,
                                        const std::string& model_version,
-                                       const std::string& request_id,
                                        onnxruntime::hosting::PredictRequest& request,
                                        /* out */ onnxruntime::hosting::PredictResponse& response) {
   bool using_raw_data = true;
-  auto logger = env_->GetLogger(request_id);
+  auto logger = env_->GetLogger(request_id_);
 
   onnxruntime::NameMLValMap name_ml_value_map{};
 
@@ -68,7 +68,7 @@ protobufutil::Status Executor::Predict(const std::string& model_name,
     using_raw_data = using_raw_data && input.second.has_raw_data();
 
     MLValue ml_value;
-    auto status = SetMLValue(input.second, logger, cpu_allocator_info, ml_value);
+    auto status = SetMLValue(input.second, cpu_allocator_info, ml_value);
     if (status != protobufutil::Status::OK) {
       return status;
     }
@@ -86,7 +86,7 @@ protobufutil::Status Executor::Predict(const std::string& model_name,
   // Run()!
   OrtRunOptions run_options{};
   run_options.run_log_verbosity_level = 4;  // TODO: respect user selected log level
-  run_options.run_tag = request_id;
+  run_options.run_tag = request_id_;
 
   auto status = env_->GetSession()->Run(run_options, name_ml_value_map, output_names, &outputs);
   if (!status.IsOK()) {
@@ -99,8 +99,6 @@ protobufutil::Status Executor::Predict(const std::string& model_name,
     onnx::TensorProto output_tensor{};
     status = MLValueToTensorProto(outputs[i], using_raw_data, logger, output_tensor);
     if (!status.IsOK()) {
-      LOGS(*logger, ERROR) << "MLValueToTensorProto() failed! Output name: " << output_names[i]
-                           << ". Error Message: " << status.ErrorMessage();
       return GenerateProtoBufStatus(status, "MLValueToTensorProto() failed: " + status.ErrorMessage());
     }
 

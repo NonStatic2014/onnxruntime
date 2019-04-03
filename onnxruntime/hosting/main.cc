@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
 
   app.RegisterError(
       [env](auto& context) -> void {
-        auto logger = env->GetLogger(context.uuid);
+        auto logger = env->GetLogger(context.request_id);
         LOGS(*logger, VERBOSE) << "Error code: " << context.error_code;
         LOGS(*logger, VERBOSE) << "Error message: " << context.error_message;
 
