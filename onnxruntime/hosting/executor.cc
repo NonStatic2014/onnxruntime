@@ -55,7 +55,7 @@ protobufutil::Status Executor::SetNameMLValueMap(onnxruntime::NameMLValMap& name
   auto logger = env_->GetLogger(request_id_);
 
   OrtAllocatorInfo* cpu_allocator_info = nullptr;
-  auto ort_status = OrtCreateAllocatorInfo("Cpu", OrtDeviceAllocator, 0, OrtMemTypeDefault, &cpu_allocator_info);
+  auto ort_status = OrtCreateAllocatorInfo("Cpu", OrtArenaAllocator, 0, OrtMemTypeDefault, &cpu_allocator_info);
   if (ort_status != nullptr || cpu_allocator_info == nullptr) {
     LOGS(*logger, ERROR) << "OrtCreateAllocatorInfo failed";
     return protobufutil::Status(protobufutil::error::Code::RESOURCE_EXHAUSTED, "OrtCreateAllocatorInfo() failed");
