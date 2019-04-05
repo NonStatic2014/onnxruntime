@@ -10,15 +10,15 @@
 namespace onnxruntime {
 namespace hosting {
 
-HostingEnvironment::HostingEnvironment(logging::Severity severity, logging::LoggingManager::InstanceType instance_type) : severity_(severity),
-                                                                                                                          default_filter_user_data_(false),
-                                                                                                                          logger_id_("HostingApp"),
-                                                                                                                          default_logging_manager_(
-                                                                                                                              std::unique_ptr<logging::ISink>{new LogSink{}},
-                                                                                                                              severity,
-                                                                                                                              false,
-                                                                                                                              instance_type,
-                                                                                                                              &logger_id_) {
+HostingEnvironment::HostingEnvironment(logging::Severity severity) : severity_(severity),
+                                                                     default_filter_user_data_(false),
+                                                                     logger_id_("HostingApp"),
+                                                                     default_logging_manager_(
+                                                                         std::unique_ptr<logging::ISink>{new LogSink{}},
+                                                                         severity,
+                                                                         false,
+                                                                         logging::LoggingManager::InstanceType::Default,
+                                                                         &logger_id_) {
   auto status = onnxruntime::Environment::Create(runtime_environment_);
 
   // The session initialization MUST BE AFTER environment creation

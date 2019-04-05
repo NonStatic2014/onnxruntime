@@ -17,7 +17,7 @@ namespace logging = logging;
 
 class HostingEnvironment {
  public:
-  explicit HostingEnvironment(logging::Severity severity, logging::LoggingManager::InstanceType instance_type = logging::LoggingManager::Default);
+  explicit HostingEnvironment(logging::Severity severity);
   ~HostingEnvironment() = default;
   HostingEnvironment(const HostingEnvironment&) = delete;
 
