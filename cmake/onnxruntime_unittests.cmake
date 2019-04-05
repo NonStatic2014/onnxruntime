@@ -537,7 +537,6 @@ if (onnxruntime_BUILD_HOSTING)
     if(HAS_UNUSED_PARAMETER)
       set_source_files_properties("${TEST_SRC_DIR}/hosting/json_handling_tests.cc" PROPERTIES COMPILE_FLAGS -Wno-unused-parameter)
       set_source_files_properties("${TEST_SRC_DIR}/hosting/converter_tests.cc" PROPERTIES COMPILE_FLAGS -Wno-unused-parameter)
-      set_source_files_properties("${TEST_SRC_DIR}/hosting/executor_test.cc" PROPERTIES COMPILE_FLAGS -Wno-unused-parameter)
       set_source_files_properties("${TEST_SRC_DIR}/hosting/util_tests.cc" PROPERTIES COMPILE_FLAGS -Wno-unused-parameter)
     endif()
   endif()
@@ -548,7 +547,6 @@ if (onnxruntime_BUILD_HOSTING)
   add_dependencies(onnxruntime_test_utils_for_hosting onnxruntime_hosting ${onnxruntime_EXTERNAL_DEPENDENCIES})
   target_include_directories(onnxruntime_test_utils_for_hosting PUBLIC ${Boost_INCLUDE_DIR} ${REPO_ROOT}/cmake/external/re2 ${CMAKE_CURRENT_BINARY_DIR}/onnx ${ONNXRUNTIME_ROOT}/hosting/http PRIVATE ${ONNXRUNTIME_ROOT} )
   target_link_libraries(onnxruntime_test_utils_for_hosting ${Boost_LIBRARIES} ${onnx_test_libs})
-  target_compile_definitions(onnxruntime_test_utils_for_hosting PUBLIC "HAVE_FRAMEWORK_LIB")
 
   AddTest(
     TARGET onnxruntime_hosting_tests
