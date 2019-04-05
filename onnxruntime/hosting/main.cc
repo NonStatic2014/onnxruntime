@@ -24,9 +24,9 @@ int main(int argc, char* argv[]) {
   auto logger = env->GetAppLogger();
   LOGS(logger, VERBOSE) << "Logging manager initialized.";
   LOGS(logger, VERBOSE) << "Model path: " << config.model_path;
-  auto status = env->GetSession()->Load(config.model_path);
+  auto status = env->session->Load(config.model_path);
   LOGS(logger, VERBOSE) << "Load Model Status: " << status.Code() << " ---- Error: [" << status.ErrorMessage() << "]";
-  LOGS(logger, VERBOSE) << "Session Initialized: " << env->GetSession()->Initialize();
+  LOGS(logger, VERBOSE) << "Session Initialized: " << env->session->Initialize();
 
   auto const boost_address = boost::asio::ip::make_address(config.address);
 

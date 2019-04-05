@@ -105,7 +105,7 @@ protobufutil::Status Executor::Predict(const std::string& model_name,
   OrtRunOptions run_options{};
   run_options.run_tag = request_id_;
 
-  auto status = env_->GetSession()->Run(run_options, name_ml_value_map, output_names, &outputs);
+  auto status = env_->session->Run(run_options, name_ml_value_map, output_names, &outputs);
 
   if (!status.IsOK()) {
     LOGS(*logger, ERROR) << "Run() failed." << ". Error Message: " << status.ToString();

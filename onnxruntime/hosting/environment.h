@@ -23,8 +23,8 @@ class HostingEnvironment {
 
   const logging::Logger& GetAppLogger();
   std::shared_ptr<logging::Logger> GetLogger(const std::string& id);
-  std::shared_ptr<onnxruntime::InferenceSession> GetSession() const;
 
+  std::unique_ptr<onnxruntime::InferenceSession> session;
  private:
   const logging::Severity severity_;
   bool default_filter_user_data_;
@@ -33,7 +33,6 @@ class HostingEnvironment {
 
   std::unique_ptr<onnxruntime::Environment> runtime_environment_;
   onnxruntime::SessionOptions options_;
-  std::shared_ptr<onnxruntime::InferenceSession> session_;
 };
 
 }  // namespace hosting

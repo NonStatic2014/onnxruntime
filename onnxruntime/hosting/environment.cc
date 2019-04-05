@@ -22,7 +22,7 @@ HostingEnvironment::HostingEnvironment(logging::Severity severity, logging::Logg
   auto status = onnxruntime::Environment::Create(runtime_environment_);
 
   // The session initialization MUST BE AFTER environment creation
-  session_ = std::make_shared<onnxruntime::InferenceSession>(options_, &default_logging_manager_);
+  session = std::make_unique<onnxruntime::InferenceSession>(options_, &default_logging_manager_);
 }
 
 const logging::Logger& HostingEnvironment::GetAppLogger() {
@@ -35,10 +35,6 @@ std::shared_ptr<logging::Logger> HostingEnvironment::GetLogger(const std::string
   }
 
   return default_logging_manager_.CreateLogger(id, severity_, default_filter_user_data_);
-}
-
-std::shared_ptr<onnxruntime::InferenceSession> HostingEnvironment::GetSession() const {
-  return session_;
 }
 
 }  // namespace hosting
