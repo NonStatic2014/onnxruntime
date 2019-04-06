@@ -68,6 +68,7 @@ protobufutil::Status Executor::SetNameMLValueMap(onnxruntime::NameMLValMap& name
     MLValue ml_value;
     auto status = SetMLValue(input.second, cpu_allocator_info, ml_value);
     if (status != protobufutil::Status::OK) {
+      LOGS(*logger, ERROR) << "SetMLValue() failed! Input name: " << input.first;
       return status;
     }
 
@@ -124,8 +125,8 @@ protobufutil::Status Executor::Predict(const std::string& model_name,
     auto insertion_result = response.mutable_outputs()->insert({output_names[i], output_tensor});
 
     if (!insertion_result.second) {
-      LOGS(*logger, ERROR) << "SetNameMLValueMap() failed. Input name: " << output_names[i] << " Trying to overwrite existing input value";
-      return protobufutil::Status(protobufutil::error::Code::INVALID_ARGUMENT, "SetNameMLValueMap() failed: Cannot have two inputs with the same name");
+      LOGS(*logger, ERROR) << "SetNameMLValueMap() failed. Output name: " << output_names[i] << " Trying to overwrite existing output value";
+      return protobufutil::Status(protobufutil::error::Code::INVALID_ARGUMENT, "SetNameMLValueMap() failed: Cannot have two outputs with the same name");
     }
   }
 
