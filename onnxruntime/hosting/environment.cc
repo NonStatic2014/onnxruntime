@@ -11,7 +11,6 @@ namespace onnxruntime {
 namespace hosting {
 
 HostingEnvironment::HostingEnvironment(logging::Severity severity) : severity_(severity),
-                                                                     default_filter_user_data_(false),
                                                                      logger_id_("HostingApp"),
                                                                      default_logging_manager_(
                                                                          std::unique_ptr<logging::ISink>{new LogSink{}},

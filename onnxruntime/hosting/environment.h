@@ -27,7 +27,6 @@ class HostingEnvironment {
   std::unique_ptr<onnxruntime::InferenceSession> session;
  private:
   const logging::Severity severity_;
-  bool default_filter_user_data_;
   const std::string logger_id_;
   logging::LoggingManager default_logging_manager_;
 
