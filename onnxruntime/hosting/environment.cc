@@ -16,7 +16,7 @@ HostingEnvironment::HostingEnvironment(logging::Severity severity) : severity_(s
                                                                      default_logging_manager_(
                                                                          std::unique_ptr<logging::ISink>{new LogSink{}},
                                                                          severity,
-                                                                         false,
+                                             /* default_filter_user_data */ false
                                                                          logging::LoggingManager::InstanceType::Default,
                                                                          &logger_id_) {
   auto status = onnxruntime::Environment::Create(runtime_environment_);
