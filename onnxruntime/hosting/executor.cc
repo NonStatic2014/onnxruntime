@@ -36,7 +36,7 @@ protobufutil::Status Executor::SetMLValue(const onnx::TensorProto& input_tensor,
     return GenerateProtobufStatus(status, "GetSizeInBytesFromTensorProto() failed: " + status.ErrorMessage());
   }
 
-  auto data = std::make_unique<char*>(new char[cpu_tensor_length]);
+  std::unique_ptr<char[]> data(new char[cpu_tensor_length]);
   memset(data.get(), 0, cpu_tensor_length);
 
   OrtCallback deleter;
