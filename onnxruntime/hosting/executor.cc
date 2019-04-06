@@ -33,7 +33,7 @@ protobufutil::Status Executor::SetMLValue(const onnx::TensorProto& input_tensor,
   auto status = onnxruntime::utils::GetSizeInBytesFromTensorProto<0>(input_tensor, &cpu_tensor_length);
   if (!status.IsOK()) {
     LOGS(*logger, ERROR) << "GetSizeInBytesFromTensorProto() failed. Error Message: " << status.ToString();
-    return GenerateProtobufStatus(status, "GetSizeInBytesFromTensorProto() failed: " + status.ErrorMessage());
+    return GenerateProtobufStatus(status, "GetSizeInBytesFromTensorProto() failed: " + status.ToString());
   }
 
   std::unique_ptr<char[]> data(new char[cpu_tensor_length]);
@@ -45,7 +45,7 @@ protobufutil::Status Executor::SetMLValue(const onnx::TensorProto& input_tensor,
                                                     ml_value, deleter);
   if (!status.IsOK()) {
     LOGS(*logger, ERROR) << "TensorProtoToMLValue() failed. Message: " << status.ToString();
-    return GenerateProtobufStatus(status, "TensorProtoToMLValue() failed:" + status.ErrorMessage());
+    return GenerateProtobufStatus(status, "TensorProtoToMLValue() failed:" + status.ToString());
   }
 
   return protobufutil::Status::OK;
@@ -109,7 +109,7 @@ protobufutil::Status Executor::Predict(const std::string& model_name,
 
   if (!status.IsOK()) {
     LOGS(*logger, ERROR) << "Run() failed." << ". Error Message: " << status.ToString();
-    return GenerateProtobufStatus(status, "Run() failed: " + status.ErrorMessage());
+    return GenerateProtobufStatus(status, "Run() failed: " + status.ToString());
   }
 
   // Build the response
@@ -118,7 +118,7 @@ protobufutil::Status Executor::Predict(const std::string& model_name,
     status = MLValueToTensorProto(outputs[i], using_raw_data, logger, output_tensor);
     if (!status.IsOK()) {
       LOGS(*logger, ERROR) << "MLValueToTensorProto() failed. Output name: " << output_names[i] << ". Error Message: " << status.ToString();
-      return GenerateProtobufStatus(status, "MLValueToTensorProto() failed: " + status.ErrorMessage());
+      return GenerateProtobufStatus(status, "MLValueToTensorProto() failed: " + status.ToString());
     }
 
     auto insertion_result = response.mutable_outputs()->insert({output_names[i], output_tensor});
