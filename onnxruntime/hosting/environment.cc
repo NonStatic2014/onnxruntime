@@ -15,7 +15,7 @@ HostingEnvironment::HostingEnvironment(logging::Severity severity) : severity_(s
                                                                      default_logging_manager_(
                                                                          std::unique_ptr<logging::ISink>{new LogSink{}},
                                                                          severity,
-                                             /* default_filter_user_data */ false
+                                                                         /* default_filter_user_data */ false,
                                                                          logging::LoggingManager::InstanceType::Default,
                                                                          &logger_id_) {
   auto status = onnxruntime::Environment::Create(runtime_environment_);
@@ -33,7 +33,7 @@ std::shared_ptr<logging::Logger> HostingEnvironment::GetLogger(const std::string
     LOGS(GetAppLogger(), WARNING) << "Request id is null or empty string";
   }
 
-  return default_logging_manager_.CreateLogger(id, severity_, default_filter_user_data_);
+  return default_logging_manager_.CreateLogger(id, severity_, false);
 }
 
 }  // namespace hosting
