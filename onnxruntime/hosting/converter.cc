@@ -176,8 +176,11 @@ common::Status MLValueToTensorProto(onnxruntime::MLValue& ml_value, bool using_r
     }
     case onnx::TensorProto_DataType_BFLOAT16: {  // Target: raw_data or int32_data
       const auto* data = tensor.Data<onnxruntime::BFloat16>();
+      const auto raw_data_size = tensor.Shape().Size();
+
       std::vector<uint16_t> raw_data;
-      for (int i = 0; i < tensor.Shape().Size(); ++i) {
+      raw_data.reserve(raw_data_size);
+      for (int i = 0; i < raw_data_size; ++i) {
         raw_data.push_back(data[i].val);
       }
 
