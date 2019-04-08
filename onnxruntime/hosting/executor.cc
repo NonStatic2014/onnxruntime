@@ -116,7 +116,9 @@ protobufutil::Status Executor::Predict(const std::string& model_name,
   // Build the response
   for (size_t i = 0; i < outputs.size(); ++i) {
     onnx::TensorProto output_tensor{};
-    status = MLValueToTensorProto(outputs[i], using_raw_data, logger, output_tensor);
+    status = MLValueToTensorProto(outputs[i], using_raw_data, std::move(logger), output_tensor);
+    logger = env_->GetLogger(request_id_);
+
     if (!status.IsOK()) {
       LOGS(*logger, ERROR) << "MLValueToTensorProto() failed. Output name: " << output_names[i] << ". Error Message: " << status.ToString();
       return GenerateProtobufStatus(status, "MLValueToTensorProto() failed: " + status.ToString());
