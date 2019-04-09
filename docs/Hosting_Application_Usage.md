@@ -1,6 +1,6 @@
 # How to Use ONNX Hosting Application REST API for Prediction
 
-ONNX Hosting provides a REST API for prediction. The command line is quite simple as shown below. The only mandatory program argument is `model_path`
+ONNX Hosting provides a REST API for prediction. The goal of the project is to make it easy to "host" any ONNX model as a RESTful service. The CLI command to start the service is shown below:
 
 ```
 ~./onnxruntime_hosting --help
@@ -17,6 +17,8 @@ Allowed options:
 
 ```
 
+Note: The only mandatory argument for the program here is `model_path`
+
 ## Start the Server
 
 To host an ONNX model as a REST API server, run:
@@ -31,11 +33,11 @@ The prediction URL is in this format:
 http://<your_ip_address>:<port>/v1/models/<your-model-name>/versions/<your-version>:predict
 ```
 
-**Note**: Since we currently only support one model, the model name and version can be any string length > 0. In the future, model_names and versions will have to be correct.
+**Note**: Since we currently only support one model, the model name and version can be any string length > 0. In the future, model_names and versions will be verified.
 
 ## Request and Response Payload
 
-An HTTP request can be a Protobuf message in two formats: binary or JSON. The HTTP request header field `Content-Type` indicates to the server how to handle the request payload. It is a mandatory required for all requests. Requests missing `Content-Type` will be rejected as `400 Bad Request`.
+An HTTP request can be a Protobuf message in two formats: binary or JSON. The HTTP request header field `Content-Type` tells the server how to handle the request and thus it is mandatory for all requests. Requests missing `Content-Type` will be rejected as `400 Bad Request`.
 
 * For `"Content-Type: application/json"`, the payload will be deserialized as JSON string in UTF-8 format
 * For `"Content-Type: application/vnd.google.protobuf"`, `"Content-Type: application/x-protobuf"` or `"Content-Type: application/octet-stream"`, the payload will be consumed as protobuf message directly.
@@ -44,7 +46,7 @@ The Protobuf definition can be found [here](https://github.com/Microsoft/onnxrun
 
 ## Inferencing
 
-To send a request to the server, you can use any of your preferred tools. Here is an example using `curl`:
+To send a request to the server, you can use any tool which supports making HTTP requests. Here is an example using `curl`:
 
 ```
 curl  -X POST -d "@predict_request_0.json" -H "Content-Type: application/json" http://127.0.0.1:8001/v1/models/mymodel/versions/3:predict
@@ -56,13 +58,13 @@ or
 curl -X POST --data-binary "@predict_request_0.pb" -H "Content-Type: application/octet-stream" -H "Foo: 1234"  http://127.0.0.1:8001/v1/models/mymodel/versions/3:predict
 ```
 
-To control the response data type, we allow the client to send the request with `Accept` header field to indicate what kind of serialization to be expected. It has the same choices and meanings as `Content-Type` header field.
+Clients can control the response type by setting the request with an `Accept` header field and the server will serialize in your desired format. The choices currently available are the same as the `Content-Type` header field.
 
 ## Advanced Topics
 
 ### Number of HTTP Threads
 
-You can change this to optimize server utilization. Default is the number of CPU cores on the machine the project is compiled on.
+You can change this to optimize server utilization. The default is the number of CPU cores on the host machine.
 
 ### Request ID and Client Request ID
 
@@ -71,7 +73,7 @@ For easy tracking of requests, we provide the following header fields:
 * `x-ms-request-id`: will be in the response header, no matter the request result. It will be a GUID/uuid with dash, e.g. `72b68108-18a4-493c-ac75-d0abd82f0a11`. If the request headers contain this field, the value will be ignored.
 * `x-ms-client-request-id`: a field for clients to tracking their requests. The content will persist in the response headers.
 
-Here is an example:
+Here is an example of a client sending a request:
 
 #### Client Side
 
@@ -102,6 +104,8 @@ Note: Unnecessary use of -X or --request, POST is already inferred.
 ```
 
 #### Server Side
+
+And here is what the output on the server side looks like with logging level of verbose:
 
 ```
 2019-04-04 23:48:26.395200744 [V:onnxruntime:72b68108-18a4-493c-ac75-d0abd82f0a11, predict_request_handler.cc:40 Predict] Name: mymodel Version: 3 Action: predict
