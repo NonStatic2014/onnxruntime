@@ -121,27 +121,26 @@ macro(DO_FIND_BOOST_DOWNLOAD)
 		message("Building ")
 	endif()
 
-	foreach(component ${Boost_FIND_COMPONENTS})
-		message(STATUS "Building {component}")
-		ExternalProject_Add(
-				boost_${component}
-				PREFIX ${BOOST_SOURCE_DIR}
-				SOURCE_DIR ${BOOST_SOURCE_DIR}
-				BINARY_DIR ${BOOST_SOURCE_DIR}
-				CONFIGURE_COMMAND ""
-				BUILD_COMMAND "./b2 install ${BOOST_MAYBE_STATIC} variant=release" --with-${component}
-				INSTALL_COMMAND ""
-				LOG_BUILD ON
-		)
-	endforeach()
+	message(STATUS "Building all components")
+	include(ExternalProject)
+	ExternalProject_Add(
+			Boost
+			PREFIX ${BOOST_SOURCE_DIR}
+			SOURCE_DIR ${BOOST_SOURCE_DIR}
+			BINARY_DIR ${BOOST_SOURCE_DIR}
+			CONFIGURE_COMMAND ""
+			BUILD_COMMAND ./b2 install ${BOOST_MAYBE_STATIC} variant=release ${BOOST_COMPONENTS_FOR_BUILD}
+			INSTALL_COMMAND ""
+			LOG_BUILD ON
+	)
 
-	#ExternalProject_Get_Property(Boost install_dir)
-	#set(BOOST_INCLUDE_DIRS ${install_dir}/include)
+	ExternalProject_Get_Property(Boost install_dir)
+	set(BOOST_INCLUDE_DIRS ${install_dir}/include)
 
-	#[[macro(libraries_to_fullpath varname)
+	macro(libraries_to_fullpath varname)
 		set(${varname})
 		foreach(component ${Boost_FIND_COMPONENTS})
-			list(APPEND ${varname} ${BOOST_ROOT_DIR}/lib/${LIBRARY_PREFIX}boost_${component}${LIBRARY_SUFFIX})
+			list(APPEND ${varname} ${BOOST_SOURCE_DIR}/lib/${LIBRARY_PREFIX}boost_${component}${LIBRARY_SUFFIX})
 		endforeach()
 	endmacro()
 	libraries_to_fullpath(BOOST_LIBRARIES)
@@ -149,7 +148,7 @@ macro(DO_FIND_BOOST_DOWNLOAD)
 	FIND_PACKAGE_HANDLE_STANDARD_ARGS(Boost DEFAULT_MSG
 		BOOST_INCLUDE_DIRS BOOST_LIBRARIES
 		)
-	mark_as_advanced(BOOST_LIBRARIES BOOST_INCLUDE_DIRS)]]
+	mark_as_advanced(BOOST_LIBRARIES BOOST_INCLUDE_DIRS)
 endmacro()
 
 if(NOT BOOST_FOUND)
