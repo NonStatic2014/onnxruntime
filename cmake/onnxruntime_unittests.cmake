@@ -538,7 +538,7 @@ if (onnxruntime_BUILD_SHARED_LIB)
   endif()
 endif()
 
-if (onnxruntime_BUILD_HOSTING)
+#[[if (onnxruntime_BUILD_HOSTING)
   file(GLOB onnxruntime_test_hosting_src
     "${TEST_SRC_DIR}/hosting/*.cc"
     "${TEST_SRC_DIR}/hosting/*.h"
@@ -564,7 +564,7 @@ if (onnxruntime_BUILD_HOSTING)
     LIBS ${onnxruntime_test_hosting_libs} hosting_proto onnxruntime_hosting_lib ${onnxruntime_test_providers_libs}
     DEPENDS ${onnxruntime_EXTERNAL_DEPENDENCIES}
   )
-endif()
+endif()]]
 
 add_executable(onnxruntime_mlas_test ${TEST_SRC_DIR}/mlas/unittest.cpp)
 target_include_directories(onnxruntime_mlas_test PRIVATE ${ONNXRUNTIME_ROOT}/core/mlas/inc)

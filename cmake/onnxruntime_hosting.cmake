@@ -21,6 +21,7 @@ if(NOT WIN32)
 endif()
 
 # Setup dependencies
+include(get_boost.cmake)
 find_package(Boost 1.69 COMPONENTS system context thread program_options REQUIRED)
 set(re2_src ${REPO_ROOT}/cmake/external/re2)
 
