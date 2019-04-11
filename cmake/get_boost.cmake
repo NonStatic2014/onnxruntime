@@ -123,11 +123,16 @@ macro(DO_FIND_BOOST_DOWNLOAD)
 
 	foreach(component ${Boost_FIND_COMPONENTS})
 		message(STATUS "Building {component}")
-		execute_process(COMMAND ./b2 ${BOOST_MAYBE_STATIC} variant=${VARIANT} ${component} install WORKING_DIRECTORY ${BOOST_SOURCE_DIR}
-				RESULT_VARIABLE Result OUTPUT_VARIABLE Output ERROR_VARIABLE Error)
-		if(NOT Result EQUAL "0")
-			message(FATAL_ERROR "Failed installing {component}:\n${Output}\n${Error}\n")
-		endif()
+		ExternalProject_Add(
+				boost_${component}
+				PREFIX ${BOOST_SOURCE_DIR}
+				SOURCE_DIR ${BOOST_SOURCE_DIR}
+				BINARY_DIR ${BOOST_SOURCE_DIR}
+				CONFIGURE_COMMAND ""
+				BUILD_COMMAND "./b2 install ${BOOST_MAYBE_STATIC} variant=release" --with-${component}
+				INSTALL_COMMAND ""
+				LOG_BUILD ON
+		)
 	endforeach()
 
 	#ExternalProject_Get_Property(Boost install_dir)
