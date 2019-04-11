@@ -1,4 +1,6 @@
-set(BOOST_REQUESTED_VERSION 1.69)
+set(BOOST_REQUESTED_VERSION 1.69.0)
+set(BoostSHA1 8f32d4617390d1c2d16f26a27ab60d97807b35440d45891fa340fc2648b04406)
+
 set(Boost_FIND_COMPONENTS program_options uuid)
 
 if(NOT Boost_FIND_COMPONENTS)
@@ -50,10 +52,9 @@ macro(DO_FIND_BOOST_SYSTEM)
 endmacro()
 
 macro(DO_FIND_BOOST_ROOT)
-	message("&&&&&&&&&&&&&&&&&&&&&&&&&7")
 	if(NOT BOOST_ROOT_DIR)
 		message(STATUS "BOOST_ROOT_DIR is not defined, using binary directory.")
-		set(BOOST_ROOT_DIR ${CURRENT_CMAKE_BINARY_DIR} CACHE PATH "")
+		set(BOOST_ROOT_DIR ${CMAKE_BINARY_DIR}/boost)
 	endif()
 
 	find_path(BOOST_INCLUDE_DIR boost/config.hpp ${BOOST_ROOT_DIR}/include)
@@ -67,7 +68,6 @@ macro(DO_FIND_BOOST_ROOT)
 endmacro()
 
 macro(DO_FIND_BOOST_DOWNLOAD)
-	message("%%%%%%%%%%%%%%%%%%%%")
 	if(NOT BOOST_REQUESTED_VERSION)
 		message(FATAL_ERROR "BOOST_REQUESTED_VERSION is not defined.")
 	endif()
@@ -79,24 +79,30 @@ macro(DO_FIND_BOOST_DOWNLOAD)
 		set(BOOST_MAYBE_STATIC "link=static")
 	endif()
 
-	message("DOWWWWNLOOOADDDINNNGGG")
+	set(BOOST_ZIP_PATH "${BOOST_ROOT_DIR}/boost_${BOOST_REQUESTED_VERSION_UNDERSCORE}.tar.bz2")
+	if(NOT EXISTS ${BOOST_ZIP_PATH})
+		message(STATUS "Downloading boost ${BOOST_REQUESTED_VERSION} to ${BOOST_ROOT_DIR}")
+	endif()
 
-	include(ExternalProject)
-	ExternalProject_Add(
-		Boost
-		URL https://dl.bintray.com/boostorg/release/${BOOST_REQUESTED_VERSION}/source/boost_${BOOST_REQUESTED_VERSION_UNDERSCORE}.zip
-		UPDATE_COMMAND ""
-		CONFIGURE_COMMAND ./bootstrap.sh --prefix=${BOOST_ROOT_DIR}
-		BUILD_COMMAND ./b2 ${BOOST_MAYBE_STATIC} --prefix=${BOOST_ROOT_DIR} ${BOOST_COMPONENTS_FOR_BUILD} install
-		BUILD_IN_SOURCE true
-		INSTALL_COMMAND ""
-		INSTALL_DIR ${BOOST_ROOT_DIR}
-		)
+	message(STATUS "Boost root dir: ${BOOST_ROOT_DIR}")
 
-	message("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+	file(DOWNLOAD https://dl.bintray.com/boostorg/release/${BOOST_REQUESTED_VERSION}/source/boost_${BOOST_REQUESTED_VERSION_UNDERSCORE}.tar.bz2
+			${BOOST_ZIP_PATH}
+			STATUS Status
+			SHOW_PROGRESS
+			EXPECTED_HASH SHA1=${BoostSHA1}
+	)
 
-	ExternalProject_Get_Property(Boost install_dir)
-	set(BOOST_INCLUDE_DIRS ${install_dir}/include)
+	execute_process(COMMAND ${CMAKE_COMMAND} -E tar xfz ${BOOST_ZIP_PATH}
+			WORKING_DIRECTORY ${BoostExtractFolder}
+			RESULT_VARIABLE Result
+			)
+	if(NOT Result EQUAL "0")
+		message(FATAL_ERROR "Failed extracting boost ${BoostVersion} to ${BoostExtractFolder}")
+	endif()
+
+	#ExternalProject_Get_Property(Boost install_dir)
+	#set(BOOST_INCLUDE_DIRS ${install_dir}/include)
 
 	macro(libraries_to_fullpath varname)
 		set(${varname})
@@ -113,16 +119,13 @@ macro(DO_FIND_BOOST_DOWNLOAD)
 endmacro()
 
 if(NOT BOOST_FOUND)
-	message("@@@@@@@@")
 	DO_FIND_BOOST_ROOT()
 endif()
 
 if(NOT BOOST_FOUND)
-	message("###########")
 	DO_FIND_BOOST_SYSTEM()
 endif()
 
 if(NOT BOOST_FOUND)
-	message("$$$$$$$$$$$$$$$$")
 	DO_FIND_BOOST_DOWNLOAD()
 endif()
