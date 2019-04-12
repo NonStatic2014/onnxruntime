@@ -54,7 +54,7 @@ endmacro()
 macro(DO_FIND_BOOST_ROOT)
 	if(NOT BOOST_ROOT_DIR)
 		message(STATUS "BOOST_ROOT_DIR is not defined, using binary directory.")
-        set(BOOST_ROOT_DIR ${CMAKE_BINARY_DIR}/boost PARENT_SCOPE )
+        set(BOOST_ROOT_DIR ${CMAKE_BINARY_DIR}/boost CACHE PATH "" )
 	endif()
 
 	find_path(BOOST_INCLUDE_DIR boost/config.hpp ${BOOST_ROOT_DIR}/include)
