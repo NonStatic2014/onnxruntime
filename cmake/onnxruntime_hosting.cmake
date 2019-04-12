@@ -22,7 +22,6 @@ endif()
 
 # Setup dependencies
 include(get_boost.cmake)
-set(BOOST_ROOT ${CMAKE_BINARY_DIR}/boost)
 #find_package(Boost 1.69 COMPONENTS system thread program_options REQUIRED)
 set(re2_src ${REPO_ROOT}/cmake/external/re2)
 
@@ -63,7 +62,7 @@ target_include_directories(onnxruntime_hosting_http_core_lib
   ${Boost_INCLUDE_DIR}
   ${re2_src}
 )
-add_dependencies(onnxruntime_hosting_http_core_lib Boost)
+#add_dependencies(onnxruntime_hosting_http_core_lib Boost)
 target_link_libraries(onnxruntime_hosting_http_core_lib PRIVATE
   ${Boost_LIBRARIES}
 )

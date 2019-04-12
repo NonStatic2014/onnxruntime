@@ -128,27 +128,16 @@ macro(DO_FIND_BOOST_DOWNLOAD)
             SOURCE_DIR ${BOOST_SOURCE_DIR}
 			INSTALL_DIR ${BOOST_ROOT_DIR}
 			CONFIGURE_COMMAND ""
-			BUILD_COMMAND ./b2 install ${BOOST_MAYBE_STATIC} --prefix=${BOOST_ROOT_DIR} variant=${VARIANT} ${BOOST_COMPONENTS_FOR_BUILD}
+			BUILD_COMMAND ./b2 install ${BOOST_MAYBE_STATIC} --prefix=${BOOST_ROOT_DIR} variant=${VARIANT} toolset=gcc ${BOOST_COMPONENTS_FOR_BUILD}
 			BUILD_IN_SOURCE true
 			INSTALL_COMMAND ""
 			LOG_BUILD ON
 	)
 
-	#[[ExternalProject_Get_Property(Boost install_dir)
-	set(BOOST_INCLUDE_DIRS ${install_dir}/include)
-
-	macro(libraries_to_fullpath varname)
-		set(${varname})
-		foreach(component ${Boost_FIND_COMPONENTS})
-            list(APPEND ${varname} ${BOOST_ROOT_DIR}/lib/${LIBRARY_PREFIX}boost_${component}${LIBRARY_SUFFIX})
-		endforeach()
-	endmacro()
-	libraries_to_fullpath(BOOST_LIBRARIES)
-
-	FIND_PACKAGE_HANDLE_STANDARD_ARGS(Boost DEFAULT_MSG
-		BOOST_INCLUDE_DIRS BOOST_LIBRARIES
-		)
-	mark_as_advanced(BOOST_LIBRARIES BOOST_INCLUDE_DIRS)]]
+	ExternalProject_Get_Property(Boost install_dir)
+	set(BOOST_ROOT ${install_dir})
+	set(BOOST_INCLUDE_DIR ${install_dir}/include)
+	set(BOOST_LIBRARYDIR ${install_dir}/lib)
 endmacro()
 
 if(NOT BOOST_FOUND)
