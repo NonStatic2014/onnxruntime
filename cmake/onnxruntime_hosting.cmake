@@ -63,6 +63,7 @@ target_include_directories(onnxruntime_hosting_http_core_lib
   ${Boost_INCLUDE_DIR}
   ${re2_src}
 )
+add_dependencies(onnxruntime_hosting_http_core_lib Boost)
 target_link_libraries(onnxruntime_hosting_http_core_lib PRIVATE
   ${Boost_LIBRARIES}
 )

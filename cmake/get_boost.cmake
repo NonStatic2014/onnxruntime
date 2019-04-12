@@ -127,8 +127,8 @@ macro(DO_FIND_BOOST_DOWNLOAD)
 	ExternalProject_Add(
 			Boost
             PREFIX ${BOOST_ROOT_DIR}
-            SOURCE_DIR ${BOOST_ROOT_DIR}
-            BINARY_DIR ${BOOST_ROOT_DIR}
+            SOURCE_DIR ${BOOST_SOURCE_DIR}
+            BINARY_DIR ${BOOST_SOURCE_DIR}
 			CONFIGURE_COMMAND ""
 			BUILD_COMMAND ./b2 install ${BOOST_MAYBE_STATIC} variant=debug ${BOOST_COMPONENTS_FOR_BUILD}
 			INSTALL_COMMAND ""
