@@ -33,23 +33,7 @@ endforeach()
 list(GET Boost_FIND_COMPONENTS 0 BOOST_FIRST_COMPONENT)
 set(BOOST_FIRST_COMPONENT "boost_${BOOST_FIRST_COMPONENT}")
 
-include(FindPackageHandleStandardArgs)
-
-macro(DO_FIND_BOOST_SYSTEM)
-	find_path(BOOST_INCLUDE_DIR boost/config.hpp
-		PATHS /usr/local/include /usr/include
-		)
-	find_library(BOOST_LIBRARY
-		NAMES ${BOOST_FIRST_COMPONENT}
-		PATHS /usr/local/lib /usr/lib
-		)
-	FIND_PACKAGE_HANDLE_STANDARD_ARGS(Boost DEFAULT_MSG
-		BOOST_INCLUDE_DIR BOOST_LIBRARY
-		)
-	set(BOOST_LIBRARIES ${BOOST_LIBRARY})
-	set(BOOST_INCLUDE_DIRS ${BOOST_INCLUDE_DIR})
-	mark_as_advanced(BOOST_LIBRARIES BOOST_INCLUDE_DIRS)
-endmacro()
+#include(FindPackageHandleStandardArgs)
 
 macro(DO_FIND_BOOST_ROOT)
 	if(NOT BOOST_ROOT_DIR)
@@ -59,6 +43,22 @@ macro(DO_FIND_BOOST_ROOT)
 
 	find_path(BOOST_INCLUDE_DIR boost/config.hpp ${BOOST_ROOT_DIR}/include)
 	find_library(BOOST_LIBRARY ${BOOST_FIRST_COMPONENT} HINTS ${BOOST_ROOT_DIR}/lib)
+	FIND_PACKAGE_HANDLE_STANDARD_ARGS(Boost DEFAULT_MSG
+		BOOST_INCLUDE_DIR BOOST_LIBRARY
+		)
+	set(BOOST_LIBRARIES ${BOOST_LIBRARY})
+	set(BOOST_INCLUDE_DIRS ${BOOST_INCLUDE_DIR})
+	mark_as_advanced(BOOST_LIBRARIES BOOST_INCLUDE_DIRS)
+endmacro()
+
+macro(DO_FIND_BOOST_SYSTEM)
+	find_path(BOOST_INCLUDE_DIR boost/config.hpp
+		PATHS /usr/local/include /usr/include
+		)
+	find_library(BOOST_LIBRARY
+		NAMES ${BOOST_FIRST_COMPONENT}
+		PATHS /usr/local/lib /usr/lib
+		)
 	FIND_PACKAGE_HANDLE_STANDARD_ARGS(Boost DEFAULT_MSG
 		BOOST_INCLUDE_DIR BOOST_LIBRARY
 		)
@@ -86,7 +86,7 @@ macro(DO_FIND_BOOST_DOWNLOAD)
 	endif()
 
 	include(FetchContent)
-	file(DOWNLOAD https://dl.bintray.com/boostorg/release/${BOOST_REQUESTED_VERSION}/source/boost_${BOOST_REQUESTED_VERSION_UNDERSCORE}.tar.bz2
+	file(DOWNLOAD http://dl.bintray.com/boostorg/release/${BOOST_REQUESTED_VERSION}/source/boost_${BOOST_REQUESTED_VERSION_UNDERSCORE}.tar.bz2
 			${BOOST_ZIP_PATH}
 			STATUS Status
 			SHOW_PROGRESS
@@ -121,7 +121,6 @@ macro(DO_FIND_BOOST_DOWNLOAD)
 		message("Building ")
 	endif()
 
-    # TODO: make variant a variable
 	message(STATUS "Building all components")
 	include(ExternalProject)
 	ExternalProject_Add(
@@ -130,12 +129,12 @@ macro(DO_FIND_BOOST_DOWNLOAD)
             SOURCE_DIR ${BOOST_SOURCE_DIR}
             BINARY_DIR ${BOOST_SOURCE_DIR}
 			CONFIGURE_COMMAND ""
-			BUILD_COMMAND ./b2 install ${BOOST_MAYBE_STATIC} variant=debug ${BOOST_COMPONENTS_FOR_BUILD}
+			BUILD_COMMAND ./b2 install ${BOOST_MAYBE_STATIC} variant=${VARIANT} ${BOOST_COMPONENTS_FOR_BUILD}
 			INSTALL_COMMAND ""
 			LOG_BUILD ON
 	)
 
-	ExternalProject_Get_Property(Boost install_dir)
+	#[[ExternalProject_Get_Property(Boost install_dir)
 	set(BOOST_INCLUDE_DIRS ${install_dir}/include)
 
 	macro(libraries_to_fullpath varname)
@@ -149,7 +148,7 @@ macro(DO_FIND_BOOST_DOWNLOAD)
 	FIND_PACKAGE_HANDLE_STANDARD_ARGS(Boost DEFAULT_MSG
 		BOOST_INCLUDE_DIRS BOOST_LIBRARIES
 		)
-	mark_as_advanced(BOOST_LIBRARIES BOOST_INCLUDE_DIRS)
+	mark_as_advanced(BOOST_LIBRARIES BOOST_INCLUDE_DIRS)]]
 endmacro()
 
 if(NOT BOOST_FOUND)
