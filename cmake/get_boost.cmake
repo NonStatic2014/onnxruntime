@@ -1,7 +1,7 @@
 set(BOOST_REQUESTED_VERSION 1.69.0)
 set(BoostSHA1 8f32d4617390d1c2d16f26a27ab60d97807b35440d45891fa340fc2648b04406)
 
-#set(Boost_FIND_COMPONENTS program_options system thread)
+set(Boost_FIND_COMPONENTS program_options system thread)
 
 if(NOT Boost_FIND_COMPONENTS)
 	message(FATAL_ERROR "No COMPONENTS specified for Boost")
@@ -121,14 +121,14 @@ macro(DO_FIND_BOOST_DOWNLOAD)
 		message("Building ")
 	endif()
 
-	# TODO: make variant a variable
+    # TODO: make variant a variable
 	message(STATUS "Building all components")
 	include(ExternalProject)
 	ExternalProject_Add(
 			Boost
-			PREFIX ${BOOST_ROOT_DIR}
-			SOURCE_DIR ${BOOST_ROOT_DIR}
-			BINARY_DIR ${BOOST_ROOT_DIR}
+            PREFIX ${BOOST_ROOT_DIR}
+            SOURCE_DIR ${BOOST_ROOT_DIR}
+            BINARY_DIR ${BOOST_ROOT_DIR}
 			CONFIGURE_COMMAND ""
 			BUILD_COMMAND ./b2 install ${BOOST_MAYBE_STATIC} variant=debug ${BOOST_COMPONENTS_FOR_BUILD}
 			INSTALL_COMMAND ""
@@ -141,7 +141,7 @@ macro(DO_FIND_BOOST_DOWNLOAD)
 	macro(libraries_to_fullpath varname)
 		set(${varname})
 		foreach(component ${Boost_FIND_COMPONENTS})
-			list(APPEND ${varname} ${BOOST_ROOT_DIR}/lib/${LIBRARY_PREFIX}boost_${component}${LIBRARY_SUFFIX})
+            list(APPEND ${varname} ${BOOST_ROOT_DIR}/lib/${LIBRARY_PREFIX}boost_${component}${LIBRARY_SUFFIX})
 		endforeach()
 	endmacro()
 	libraries_to_fullpath(BOOST_LIBRARIES)
