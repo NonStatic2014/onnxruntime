@@ -121,15 +121,16 @@ macro(DO_FIND_BOOST_DOWNLOAD)
 		message("Building ")
 	endif()
 
+    # TODO: make variant a variable
 	message(STATUS "Building all components")
 	include(ExternalProject)
 	ExternalProject_Add(
 			Boost
-			PREFIX ${BOOST_SOURCE_DIR}
-			SOURCE_DIR ${BOOST_SOURCE_DIR}
-			BINARY_DIR ${BOOST_SOURCE_DIR}
+            PREFIX ${BOOST_ROOT_DIR}
+            SOURCE_DIR ${BOOST_ROOT_DIR}
+            BINARY_DIR ${BOOST_ROOT_DIR}
 			CONFIGURE_COMMAND ""
-			BUILD_COMMAND ./b2 install ${BOOST_MAYBE_STATIC} variant=release ${BOOST_COMPONENTS_FOR_BUILD}
+			BUILD_COMMAND ./b2 install ${BOOST_MAYBE_STATIC} variant=debug ${BOOST_COMPONENTS_FOR_BUILD}
 			INSTALL_COMMAND ""
 			LOG_BUILD ON
 	)
