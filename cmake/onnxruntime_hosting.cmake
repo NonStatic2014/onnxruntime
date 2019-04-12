@@ -23,7 +23,7 @@ endif()
 # Setup dependencies
 include(get_boost.cmake)
 set(BOOST_ROOT ${CMAKE_BINARY_DIR}/boost)
-#find_package(Boost 1.69 COMPONENTS system context thread program_options REQUIRED)
+#find_package(Boost 1.69 COMPONENTS system thread program_options REQUIRED)
 set(re2_src ${REPO_ROOT}/cmake/external/re2)
 
 # Setup source code

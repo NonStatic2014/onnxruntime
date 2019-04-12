@@ -33,7 +33,7 @@ endforeach()
 list(GET Boost_FIND_COMPONENTS 0 BOOST_FIRST_COMPONENT)
 set(BOOST_FIRST_COMPONENT "boost_${BOOST_FIRST_COMPONENT}")
 
-#include(FindPackageHandleStandardArgs)
+include(FindPackageHandleStandardArgs)
 
 macro(DO_FIND_BOOST_ROOT)
 	if(NOT BOOST_ROOT_DIR)
@@ -125,11 +125,11 @@ macro(DO_FIND_BOOST_DOWNLOAD)
 	include(ExternalProject)
 	ExternalProject_Add(
 			Boost
-            PREFIX ${BOOST_ROOT_DIR}
             SOURCE_DIR ${BOOST_SOURCE_DIR}
-            BINARY_DIR ${BOOST_SOURCE_DIR}
+			INSTALL_DIR ${BOOST_ROOT_DIR}
 			CONFIGURE_COMMAND ""
-			BUILD_COMMAND ./b2 install ${BOOST_MAYBE_STATIC} variant=${VARIANT} ${BOOST_COMPONENTS_FOR_BUILD}
+			BUILD_COMMAND ./b2 install ${BOOST_MAYBE_STATIC} --prefix=${BOOST_ROOT_DIR} variant=${VARIANT} ${BOOST_COMPONENTS_FOR_BUILD}
+			BUILD_IN_SOURCE true
 			INSTALL_COMMAND ""
 			LOG_BUILD ON
 	)
