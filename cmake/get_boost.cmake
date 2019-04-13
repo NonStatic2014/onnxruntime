@@ -39,43 +39,8 @@ macro(DOWNLOAD_BOOST)
 		set(BOOST_MAYBE_STATIC "link=static")
 	endif()
 
-	set(BOOST_SOURCE_DIR "${BOOST_ROOT_DIR}/boost_${BOOST_REQUESTED_VERSION_UNDERSCORE}")
-	set(BOOST_ZIP_PATH "${BOOST_SOURCE_DIR}.tar.bz2")
-	if(NOT EXISTS ${BOOST_ZIP_PATH})
-		message(STATUS "Downloading boost ${BOOST_REQUESTED_VERSION} to ${BOOST_ZIP_PATH}")
-	endif()
-
-	file(DOWNLOAD http://dl.bintray.com/boostorg/release/${BOOST_REQUESTED_VERSION}/source/boost_${BOOST_REQUESTED_VERSION_UNDERSCORE}.tar.bz2
-			${BOOST_ZIP_PATH}
-			STATUS Status
-			SHOW_PROGRESS
-			EXPECTED_HASH SHA256=${BoostSHA1}
-	)
-
-	if (NOT IS_DIRECTORY "${BOOST_SOURCE_DIR}")
-		message(STATUS "Extracting boost ${BOOST_REQUESTED_VERSION} to ${BOOST_ROOT_DIR}")
-		execute_process(COMMAND ${CMAKE_COMMAND} -E tar xfz ${BOOST_ZIP_PATH}
-				WORKING_DIRECTORY ${BOOST_ROOT_DIR}
-				RESULT_VARIABLE Result
-		)
-		if(NOT Result EQUAL "0")
-			message(FATAL_ERROR "Failed extracting boost ${BOOST_REQUESTED_VERSION} to ${BOOST_ROOT_DIR}")
-		endif()
-	endif()
-
-	unset(B2_PATH CACHE)
-	find_program(B2_PATH NAMES b2 PATHS ${BOOST_SOURCE_DIR} NO_DEFAULT_PATH)
-	if(NOT B2_PATH)
-		message(STATUS "Building b2")
-		set(B2_BOOTSTRAP "./bootstrap.sh")
-		execute_process(COMMAND ${B2_BOOSTRAP} WORKING_DIRECTORY ${BOOST_SOURCE_DIR}
-				RESULT_VARIABLE Result OUTPUT_VARIABLE Output ERROR_VARIABLE Error)
-		if(NOT Result EQUAL "0")
-			message(FATAL_ERROR "Failed running ${b2Bootstrap}:\n${Output}\n${Error}\n")
-		endif()
-	endif()
-
 	set(VARIANT "release")
+
 	if(CMAKE_BUILD_TYPE MATCHES DEBUG)
 		set(VARIANT "debug")
 	endif()
@@ -84,12 +49,16 @@ macro(DOWNLOAD_BOOST)
 	include(ExternalProject)
 	ExternalProject_Add(
 			Boost
-			SOURCE_DIR ${BOOST_SOURCE_DIR}
-			INSTALL_DIR ${BOOST_ROOT_DIR}
-			CONFIGURE_COMMAND ""
+            URL http://dl.bintray.com/boostorg/release/${BOOST_REQUESTED_VERSION}/source/boost_${BOOST_REQUESTED_VERSION_UNDERSCORE}.tar.bz2
+            URL_HASH SHA256=${BoostSHA1}
+            DOWNLOAD_DIR ${BOOST_ROOT_DIR}
+            SOURCE_DIR ${BOOST_ROOT_DIR}
+            UPDATE_COMMAND ""
+            CONFIGURE_COMMAND ./bootstrap.sh --prefix=${BOOST_ROOT_DIR}
 			BUILD_COMMAND ./b2 install ${BOOST_MAYBE_STATIC} --prefix=${BOOST_ROOT_DIR} variant=${VARIANT} toolset=gcc ${BOOST_COMPONENTS_FOR_BUILD}
 			BUILD_IN_SOURCE true
 			INSTALL_COMMAND ""
+			INSTALL_DIR ${BOOST_ROOT_DIR}
 			LOG_BUILD ON
 	)
 
