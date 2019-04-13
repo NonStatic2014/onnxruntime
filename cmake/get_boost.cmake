@@ -26,6 +26,7 @@ endforeach()
 
 set(BOOST_ROOT_DIR ${CMAKE_BINARY_DIR}/boost CACHE PATH "" )
 
+# TODO: let user give their own Boost installation
 macro(DOWNLOAD_BOOST)
 	if(NOT BOOST_REQUESTED_VERSION)
 		message(FATAL_ERROR "BOOST_REQUESTED_VERSION is not defined.")
@@ -44,7 +45,6 @@ macro(DOWNLOAD_BOOST)
 		message(STATUS "Downloading boost ${BOOST_REQUESTED_VERSION} to ${BOOST_ZIP_PATH}")
 	endif()
 
-	include(FetchContent)
 	file(DOWNLOAD http://dl.bintray.com/boostorg/release/${BOOST_REQUESTED_VERSION}/source/boost_${BOOST_REQUESTED_VERSION_UNDERSCORE}.tar.bz2
 			${BOOST_ZIP_PATH}
 			STATUS Status
@@ -63,12 +63,12 @@ macro(DOWNLOAD_BOOST)
 		endif()
 	endif()
 
-	unset(b2Path CACHE)
-	find_program(b2Path NAMES b2 PATHS ${BOOST_SOURCE_DIR} NO_DEFAULT_PATH)
-	if(NOT b2Path)
+	unset(B2_PATH CACHE)
+	find_program(B2_PATH NAMES b2 PATHS ${BOOST_SOURCE_DIR} NO_DEFAULT_PATH)
+	if(NOT B2_PATH)
 		message(STATUS "Building b2")
-		set(b2Bootstrap "./bootstrap.sh")
-		execute_process(COMMAND ${b2Bootstrap} WORKING_DIRECTORY ${BOOST_SOURCE_DIR}
+		set(B2_BOOTSTRAP "./bootstrap.sh")
+		execute_process(COMMAND ${B2_BOOSTRAP} WORKING_DIRECTORY ${BOOST_SOURCE_DIR}
 				RESULT_VARIABLE Result OUTPUT_VARIABLE Output ERROR_VARIABLE Error)
 		if(NOT Result EQUAL "0")
 			message(FATAL_ERROR "Failed running ${b2Bootstrap}:\n${Output}\n${Error}\n")
@@ -76,16 +76,15 @@ macro(DOWNLOAD_BOOST)
 	endif()
 
 	set(VARIANT "release")
-    if(CMAKE_BUILD_TYPE MATCHES DEBUG)
-		message("Building ")
-	    set(VARIANT "debug")
+	if(CMAKE_BUILD_TYPE MATCHES DEBUG)
+		set(VARIANT "debug")
 	endif()
 
-	message(STATUS "Building all components")
+	message(STATUS "Add all Boost components")
 	include(ExternalProject)
 	ExternalProject_Add(
 			Boost
-            SOURCE_DIR ${BOOST_SOURCE_DIR}
+			SOURCE_DIR ${BOOST_SOURCE_DIR}
 			INSTALL_DIR ${BOOST_ROOT_DIR}
 			CONFIGURE_COMMAND ""
 			BUILD_COMMAND ./b2 install ${BOOST_MAYBE_STATIC} --prefix=${BOOST_ROOT_DIR} variant=${VARIANT} toolset=gcc ${BOOST_COMPONENTS_FOR_BUILD}
@@ -106,6 +105,7 @@ macro(DOWNLOAD_BOOST)
 			list(APPEND ${varname} ${BOOST_ROOT_DIR}/lib/${LIBRARY_PREFIX}boost_${component}${LIBRARY_SUFFIX})
 		endforeach()
 	endmacro()
+
 	libraries_to_fullpath(BOOST_LIBRARIES)
 	set(Boost_LIBRARIES ${BOOST_LIBRARIES})
 endmacro()
