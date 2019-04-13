@@ -68,7 +68,7 @@ macro(DOWNLOAD_BOOST)
 	if(NOT B2_PATH)
 		message(STATUS "Building b2")
 		set(B2_BOOTSTRAP "./bootstrap.sh")
-		execute_process(COMMAND ${B2_BOOSTRAP} WORKING_DIRECTORY ${BOOST_SOURCE_DIR}
+		execute_process(COMMAND ${B2_BOOTSTRAP} WORKING_DIRECTORY ${BOOST_SOURCE_DIR}
 				RESULT_VARIABLE Result OUTPUT_VARIABLE Output ERROR_VARIABLE Error)
 		if(NOT Result EQUAL "0")
 			message(FATAL_ERROR "Failed running ${b2Bootstrap}:\n${Output}\n${Error}\n")
