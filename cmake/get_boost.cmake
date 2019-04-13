@@ -8,7 +8,6 @@ if(NOT BOOST_COMPONENTS)
 	message(FATAL_ERROR "No COMPONENTS specified for Boost")
 endif()
 
-# Set the library prefix and library suffix properly.
 if(BOOST_USE_STATIC_LIBS)
 	set(CMAKE_FIND_LIBRARY_PREFIXES ${CMAKE_STATIC_LIBRARY_PREFIX})
 	set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_STATIC_LIBRARY_SUFFIX})
@@ -27,8 +26,7 @@ endforeach()
 
 set(BOOST_ROOT_DIR ${CMAKE_BINARY_DIR}/boost CACHE PATH "" )
 
-
-macro(DO_FIND_BOOST_DOWNLOAD)
+macro(DOWNLOAD_BOOST)
 	if(NOT BOOST_REQUESTED_VERSION)
 		message(FATAL_ERROR "BOOST_REQUESTED_VERSION is not defined.")
 	endif()
@@ -77,9 +75,10 @@ macro(DO_FIND_BOOST_DOWNLOAD)
 		endif()
 	endif()
 
-	set(VARIANT "debug")
-	if(CMAKE_BUILD_TYPE MATCHES RELEASE)
+	set(VARIANT "release")
+    if(CMAKE_BUILD_TYPE MATCHES DEBUG)
 		message("Building ")
+	    set(VARIANT "debug")
 	endif()
 
 	message(STATUS "Building all components")
@@ -111,4 +110,4 @@ macro(DO_FIND_BOOST_DOWNLOAD)
 	set(Boost_LIBRARIES ${BOOST_LIBRARIES})
 endmacro()
 
-DO_FIND_BOOST_DOWNLOAD()
+DOWNLOAD_BOOST()
