@@ -1,6 +1,6 @@
-set(BOOST_REQUESTED_VERSION 1.69.0)
-set(BoostSHA1 8f32d4617390d1c2d16f26a27ab60d97807b35440d45891fa340fc2648b04406)
-set(BOOST_USE_STATIC_LIBS false)
+set(BOOST_REQUESTED_VERSION 1.69.0 CACHE STRING "")
+set(BOOST_SHA1 8f32d4617390d1c2d16f26a27ab60d97807b35440d45891fa340fc2648b04406 CACHE STRING "")
+set(BOOST_USE_STATIC_LIBS false CACHE BOOL "")
 
 set(BOOST_COMPONENTS program_options system thread)
 
@@ -24,7 +24,7 @@ foreach(component ${BOOST_COMPONENTS})
 	list(APPEND BOOST_COMPONENTS_FOR_BUILD --with-${component})
 endforeach()
 
-set(BOOST_ROOT_DIR ${CMAKE_BINARY_DIR}/boost CACHE PATH "" )
+set(BOOST_ROOT_DIR ${CMAKE_BINARY_DIR}/boost CACHE PATH "")
 
 # TODO: let user give their own Boost installation
 macro(DOWNLOAD_BOOST)
@@ -50,7 +50,7 @@ macro(DOWNLOAD_BOOST)
 	ExternalProject_Add(
 			Boost
 			URL http://dl.bintray.com/boostorg/release/${BOOST_REQUESTED_VERSION}/source/boost_${BOOST_REQUESTED_VERSION_UNDERSCORE}.tar.bz2
-			URL_HASH SHA256=${BoostSHA1}
+			URL_HASH SHA256=${BOOST_SHA1}
 			DOWNLOAD_DIR ${BOOST_ROOT_DIR}
 			SOURCE_DIR ${BOOST_ROOT_DIR}
 			UPDATE_COMMAND ""
