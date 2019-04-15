@@ -40,7 +40,7 @@ macro(DOWNLOAD_BOOST)
 		set(VARIANT "debug")
 	endif()
 
-	message(STATUS "Adding all Boost components")
+	message(STATUS "Adding Boost components")
 	include(ExternalProject)
 	ExternalProject_Add(
 			Boost
@@ -50,18 +50,16 @@ macro(DOWNLOAD_BOOST)
 			SOURCE_DIR ${BOOST_ROOT_DIR}
 			UPDATE_COMMAND ""
 			CONFIGURE_COMMAND ./bootstrap.sh --prefix=${BOOST_ROOT_DIR}
-			BUILD_COMMAND ./b2 install ${BOOST_MAYBE_STATIC} --prefix=${BOOST_ROOT_DIR} variant=${VARIANT} toolset=${CMAKE_C_COMPILER_ID} ${BOOST_COMPONENTS_FOR_BUILD}
+			BUILD_COMMAND ./b2 install ${BOOST_MAYBE_STATIC} --prefix=${BOOST_ROOT_DIR} variant=${VARIANT} ${BOOST_COMPONENTS_FOR_BUILD}
 			BUILD_IN_SOURCE true
 			INSTALL_COMMAND ""
 			INSTALL_DIR ${BOOST_ROOT_DIR}
 			LOG_BUILD ON
 	)
 
-	ExternalProject_Get_Property(Boost install_dir)
-	set(BOOST_ROOT ${install_dir})
-	set(BOOST_INCLUDE_DIR ${install_dir}/include)
-	set(Boost_INCLUDE_DIR ${install_dir}/include)
-	set(BOOST_LIBRARYDIR ${install_dir}/lib)
+	ExternalProject_Get_Property(Boost INSTALL_DIR)
+	set(BOOST_ROOT ${INSTALL_DIR})
+	set(Boost_INCLUDE_DIR ${INSTALL_DIR}/include)
 
 	macro(libraries_to_fullpath varname)
 		set(${varname})
@@ -70,8 +68,7 @@ macro(DOWNLOAD_BOOST)
 		endforeach()
 	endmacro()
 
-	libraries_to_fullpath(BOOST_LIBRARIES)
-	set(Boost_LIBRARIES ${BOOST_LIBRARIES})
+	libraries_to_fullpath(Boost_LIBRARIES)
 endmacro()
 
 DOWNLOAD_BOOST()
