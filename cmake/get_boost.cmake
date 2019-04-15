@@ -58,17 +58,17 @@ macro(DOWNLOAD_BOOST)
 	)
 
 	ExternalProject_Get_Property(Boost INSTALL_DIR)
-	set(BOOST_ROOT ${INSTALL_DIR})
 	set(Boost_INCLUDE_DIR ${INSTALL_DIR}/include)
 
 	macro(libraries_to_fullpath varname)
 		set(${varname})
 		foreach(component ${BOOST_COMPONENTS})
-			list(APPEND ${varname} ${BOOST_ROOT_DIR}/lib/${LIBRARY_PREFIX}boost_${component}${LIBRARY_SUFFIX})
+			list(APPEND ${varname} ${INSTALL_DIR}/lib/${LIBRARY_PREFIX}boost_${component}${LIBRARY_SUFFIX})
 		endforeach()
 	endmacro()
 
 	libraries_to_fullpath(Boost_LIBRARIES)
+	mark_as_advanced(Boost_LIBRARIES Boost_INCLUDE_DIR)
 endmacro()
 
 DOWNLOAD_BOOST()
