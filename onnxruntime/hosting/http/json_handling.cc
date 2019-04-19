@@ -36,17 +36,27 @@ protobufutil::Status GenerateResponseInJson(const onnxruntime::hosting::PredictR
 
 std::string CreateJsonError(const http::status error_code, const std::string& error_message) {
   auto escaped_message = escape_string(error_message);
-  return R"({"error_code": )" + std::to_string(int(error_code)) + R"(, "error_message": ")" + escaped_message + R"(" })" + "\n";
+  return R"({"error_code": )" + std::to_string(int(error_code)) + R"(, "error_message": ")" + escaped_message + R"("})" + "\n";
 }
 
 std::string escape_string(const std::string& message) {
   std::ostringstream o;
   for (char c : message) {
-    if (c == '"' || c == '\\' || ('\x00' <= c && c <= '\x1f')) {
-      o << "\\u"
-        << std::hex << std::setw(4) << std::setfill('0') << (int)c;
-    } else {
-      o << c;
+    switch (c) {
+      case '"': o << "\\\""; break;
+      case '\\': o << "\\\\"; break;
+      case '\b': o << "\\b"; break;
+      case '\f': o << "\\f"; break;
+      case '\n': o << "\\n"; break;
+      case '\r': o << "\\r"; break;
+      case '\t': o << "\\t"; break;
+      default:
+        if ('\x00' <= c && c <= '\x1f') {
+          o << "\\u"
+            << std::hex << std::setw(4) << std::setfill('0') << (int)c;
+        } else {
+          o << c;
+        }
     }
   }
   return o.str();

@@ -67,6 +67,54 @@ TEST(JsonSerializationTests, HappyPath) {
   EXPECT_EQ(protobufutil::error::OK, status.error_code());
   EXPECT_EQ(expected_json_string, json_string);
 }
+
+TEST(StringEscapingTests, SimpleString) {
+  std::string unescaped = "This is an error message \" \n ";
+  EXPECT_EQ("This is an error message \\\" \\n ", escape_string(unescaped));
+}
+
+TEST(StringEscapingTests, SimpleStringWithControlCharacter) {
+  std::string unescaped = "This is an \x1f error message";
+  EXPECT_EQ("This is an \\u001f error message", escape_string(unescaped));
+}
+
+TEST(StringEscapingTests, SimpleStringWithNullCharacter) {
+  std::string unescaped = "This is an error message \x00 end";
+  EXPECT_EQ("This is an error message ", escape_string(unescaped));
+}
+
+TEST(JsonErrorMessageTests, SimpleMessage) {
+  auto status = http::status::bad_request;
+  std::string error_message = "Incorrect headers";
+  std::string expected = "{\"error_code\": 400, \"error_message\": \"Incorrect headers\"}\n";
+  std::string res = CreateJsonError(status, error_message);
+  EXPECT_EQ(expected, res);
+}
+
+TEST(JsonErrorMessageTests, MessageWithNewLine) {
+  auto status = http::status::internal_server_error;
+  std::string error_message = "Contains newline \n here";
+  std::string expected = "{\"error_code\": 500, \"error_message\": \"Contains newline \\n here\"}\n";
+  std::string res = CreateJsonError(status, error_message);
+  EXPECT_EQ(expected, res);
+}
+
+TEST(JsonErrorMessageTests, MessageWithRealError) {
+  auto status = http::status::bad_request;
+  std::string error_message = "Expected , or ] after array value.\n0, 0.0, 0.0, 0.0    }  },  \"outputFilter\n                    ^";
+  std::string expected = "{\"error_code\": 400, \"error_message\": \"Expected , or ] after array value.\\n0, 0.0, 0.0, 0.0    }  },  \\\"outputFilter\\n                    ^\"}\n";
+  std::string res = CreateJsonError(status, error_message);
+  EXPECT_EQ(expected, res);
+}
+
+TEST(JsonErrorMessageTests, MessageWithQuotations) {
+  auto status = http::status::bad_request;
+  std::string error_message = R"(Error with "{"bleh": [1,2,3]|")";
+  std::string expected = "{\"error_code\": 400, \"error_message\": \"Error with \\\"{\\\"bleh\\\": [1,2,3]|\\\"\"}\n";
+  std::string result_t = CreateJsonError(status, error_message);
+  EXPECT_EQ(expected, result_t);
+}
+
 }  // namespace test
 }  // namespace hosting
 }  // namespace onnxruntime
