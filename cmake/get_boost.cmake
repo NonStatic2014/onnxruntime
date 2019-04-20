@@ -4,10 +4,6 @@ set(BOOST_USE_STATIC_LIBS true CACHE BOOL "")
 
 set(BOOST_COMPONENTS program_options system thread)
 
-if(WIN32)
-  message(FATAL_ERROR "Windows not currently supported")
-endif()
-
 if(BOOST_USE_STATIC_LIBS)
   set(LIBRARY_PREFIX ${CMAKE_STATIC_LIBRARY_PREFIX})
   set(LIBRARY_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
@@ -49,12 +45,11 @@ macro(DOWNLOAD_BOOST)
       DOWNLOAD_DIR ${BOOST_ROOT_DIR}
       SOURCE_DIR ${BOOST_ROOT_DIR}
       UPDATE_COMMAND ""
-      CONFIGURE_COMMAND ./bootstrap.sh --prefix=${BOOST_ROOT_DIR}
-      BUILD_COMMAND ./b2 install ${BOOST_MAYBE_STATIC} --prefix=${BOOST_ROOT_DIR} variant=${VARIANT} ${BOOST_COMPONENTS_FOR_BUILD}
+      CONFIGURE_COMMAND ./bootstrap.bat --prefix=${BOOST_ROOT_DIR}
+      BUILD_COMMAND ./b2 install ${BOOST_MAYBE_STATIC} --prefix=${BOOST_ROOT_DIR} variant=${VARIANT} toolset=msvc-14.1 architecture=x86 address-model=64 ${BOOST_COMPONENTS_FOR_BUILD}
       BUILD_IN_SOURCE true
       INSTALL_COMMAND ""
       INSTALL_DIR ${BOOST_ROOT_DIR}
-      LOG_BUILD ON
   )
 
   ExternalProject_Get_Property(Boost INSTALL_DIR)
