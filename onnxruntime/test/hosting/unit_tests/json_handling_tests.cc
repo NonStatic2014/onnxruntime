@@ -115,6 +115,14 @@ TEST(JsonErrorMessageTests, MessageWithQuotations) {
   EXPECT_EQ(expected, result_t);
 }
 
+TEST(JsonErrorMessageTests, MessageWithManyCarriageCharacters) {
+  auto status = http::status::bad_request;
+  std::string error_message = "\"ab\r\n\b\f\t\\\x1a\"";
+  std::string expected = "{\"error_code\": 400, \"error_message\": \"\\\"ab\\r\\n\\b\\f\\t\\\\\\u001a\\\"\"}\n";
+  std::string result_t = CreateJsonError(status, error_message);
+  EXPECT_EQ(expected, result_t);
+}
+
 }  // namespace test
 }  // namespace hosting
 }  // namespace onnxruntime
