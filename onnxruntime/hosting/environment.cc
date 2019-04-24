@@ -10,15 +10,17 @@
 namespace onnxruntime {
 namespace hosting {
 
-HostingEnvironment::HostingEnvironment(logging::Severity severity) : severity_(severity),
+HostingEnvironment::HostingEnvironment(logging::Severity severity, logging::LoggingManager::InstanceType instance_type, bool init) : severity_(severity),
                                                                      logger_id_("HostingApp"),
                                                                      default_logging_manager_(
                                                                          std::unique_ptr<logging::ISink>{new LogSink{}},
                                                                          severity,
                                                                          /* default_filter_user_data */ false,
-                                                                         logging::LoggingManager::InstanceType::Default,
+                                                                         instance_type,
                                                                          &logger_id_) {
-  auto status = onnxruntime::Environment::Create(runtime_environment_);
+  if (init) {
+    auto status = onnxruntime::Environment::Create(runtime_environment_);
+  }
 
   // The session initialization MUST BE AFTER environment creation
   session = std::make_unique<onnxruntime::InferenceSession>(options_, &default_logging_manager_);
