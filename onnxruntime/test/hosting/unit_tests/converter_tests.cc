@@ -115,7 +115,7 @@ TEST(MLValueToTensorProtoTests, FloatToRaw) {
 
   // Verify data
   EXPECT_TRUE(tp.has_raw_data());
-  int count = tp.raw_data().size() / sizeof(float);
+  auto count = tp.raw_data().size() / sizeof(float);
   EXPECT_EQ(count, 6);
 
   auto raw = tp.raw_data().data();
@@ -189,7 +189,7 @@ TEST(MLValueToTensorProtoTests, Int32ToRaw) {
 
   // Verify data
   EXPECT_TRUE(tp.has_raw_data());
-  int count = tp.raw_data().size() / sizeof(int32_t);
+  auto count = tp.raw_data().size() / sizeof(int32_t);
   EXPECT_EQ(count, 6);
 
   auto raw = tp.raw_data().data();
@@ -263,7 +263,7 @@ TEST(MLValueToTensorProtoTests, UInt8ToRaw) {
 
   // Verify data
   EXPECT_TRUE(tp.has_raw_data());
-  int count = tp.raw_data().size() / sizeof(uint8_t);
+  auto count = tp.raw_data().size() / sizeof(uint8_t);
   EXPECT_EQ(count, 6);
 
   auto raw = tp.raw_data().data();
@@ -301,7 +301,7 @@ TEST(MLValueToTensorProtoTests, UInt8ToInt32Data) {
 
   // Verify data
   EXPECT_FALSE(tp.has_raw_data());
-  int count = tp.int32_data().size() * (sizeof(int32_t) / sizeof(uint8_t));
+  auto count = tp.int32_data().size() * (sizeof(int32_t) / sizeof(uint8_t));
   EXPECT_EQ(count, 8);
   auto data = tp.int32_data().data();
   const auto* data8 = reinterpret_cast<const uint8_t*>(data);
@@ -339,7 +339,7 @@ TEST(MLValueToTensorProtoTests, Int8ToRaw) {
 
   // Verify data
   EXPECT_TRUE(tp.has_raw_data());
-  int count = tp.raw_data().size() / sizeof(uint8_t);
+  auto count = tp.raw_data().size() / sizeof(uint8_t);
   EXPECT_EQ(count, 6);
 
   auto raw = tp.raw_data().data();
@@ -377,7 +377,7 @@ TEST(MLValueToTensorProtoTests, Int8ToInt32Data) {
 
   // Verify data
   EXPECT_FALSE(tp.has_raw_data());
-  int count = tp.int32_data().size();
+  auto count = tp.int32_data().size();
   EXPECT_EQ(count, 2);
   auto data = tp.int32_data().data();
   const auto* data8 = reinterpret_cast<const int8_t*>(data);
@@ -415,7 +415,7 @@ TEST(MLValueToTensorProtoTests, UInt16ToRaw) {
 
   // Verify data
   EXPECT_TRUE(tp.has_raw_data());
-  int count = tp.raw_data().size() / sizeof(uint16_t);
+  auto count = tp.raw_data().size() / sizeof(uint16_t);
   EXPECT_EQ(count, 9);
 
   auto raw = tp.raw_data().data();
@@ -453,7 +453,7 @@ TEST(MLValueToTensorProtoTests, UInt16ToInt32Data) {
 
   // Verify data
   EXPECT_FALSE(tp.has_raw_data());
-  int count = tp.int32_data().size();
+  auto count = tp.int32_data().size();
   EXPECT_EQ(count, 5);
   auto data = tp.int32_data().data();
   const auto* data16 = reinterpret_cast<const uint16_t*>(data);
@@ -491,7 +491,7 @@ TEST(MLValueToTensorProtoTests, Int16ToRaw) {
 
   // Verify data
   EXPECT_TRUE(tp.has_raw_data());
-  int count = tp.raw_data().size() / sizeof(uint16_t);
+  auto count = tp.raw_data().size() / sizeof(uint16_t);
   EXPECT_EQ(count, 6);
 
   auto raw = tp.raw_data().data();
@@ -529,7 +529,7 @@ TEST(MLValueToTensorProtoTests, Int16ToInt32Data) {
 
   // Verify data
   EXPECT_FALSE(tp.has_raw_data());
-  int count = tp.int32_data().size() * (sizeof(int32_t) / sizeof(int16_t));
+  auto count = tp.int32_data().size() * (sizeof(int32_t) / sizeof(int16_t));
   EXPECT_EQ(count, 6);
   auto data = tp.int32_data().data();
   const auto* data16 = reinterpret_cast<const int16_t*>(data);
@@ -567,7 +567,7 @@ TEST(MLValueToTensorProtoTests, BoolToRaw) {
 
   // Verify data
   EXPECT_TRUE(tp.has_raw_data());
-  int count = tp.raw_data().size() / sizeof(bool);
+  auto count = tp.raw_data().size() / sizeof(bool);
   EXPECT_EQ(count, 6);
 
   auto raw = tp.raw_data().data();
@@ -605,7 +605,7 @@ TEST(MLValueToTensorProtoTests, BoolToInt32Data) {
 
   // Verify data
   EXPECT_FALSE(tp.has_raw_data());
-  int count = tp.int32_data().size();
+  auto count = tp.int32_data().size();
   EXPECT_EQ(count, 2);
   auto data = tp.int32_data().data();
   const auto* data16 = reinterpret_cast<const bool*>(data);
@@ -649,7 +649,7 @@ TEST(MLValueToTensorProtoTests, Float16ToRaw) {
 
   // Verify data
   EXPECT_TRUE(tp.has_raw_data());
-  int count = tp.raw_data().size() / sizeof(onnxruntime::MLFloat16);
+  auto count = tp.raw_data().size() / sizeof(onnxruntime::MLFloat16);
   EXPECT_EQ(count, 6);
 
   auto raw = tp.raw_data().data();
@@ -693,7 +693,7 @@ TEST(MLValueToTensorProtoTests, FloatToInt32Data) {
 
   // Verify data
   EXPECT_FALSE(tp.has_raw_data());
-  int count = tp.int32_data().size();
+  auto count = tp.int32_data().size();
   EXPECT_EQ(count, 3);
   auto data = tp.int32_data().data();
   const auto* data16 = reinterpret_cast<const onnxruntime::MLFloat16*>(data);
@@ -737,7 +737,7 @@ TEST(MLValueToTensorProtoTests, BFloat16ToRaw) {
 
   // Verify data
   EXPECT_TRUE(tp.has_raw_data());
-  int count = tp.raw_data().size() / sizeof(uint16_t);
+  auto count = tp.raw_data().size() / sizeof(uint16_t);
   EXPECT_EQ(count, 6);
 
   auto raw = tp.raw_data().data();
@@ -781,7 +781,7 @@ TEST(MLValueToTensorProtoTests, BFloatToInt32Data) {
 
   // Verify data
   EXPECT_FALSE(tp.has_raw_data());
-  int count = tp.int32_data().size();
+  auto count = tp.int32_data().size();
   EXPECT_EQ(count, 3);
   auto data = tp.int32_data().data();
   const auto* data16 = reinterpret_cast<const uint16_t*>(data);
@@ -824,7 +824,7 @@ TEST(MLValueToTensorProtoTests, StringToStringData) {
 
   // Verify data
   EXPECT_FALSE(tp.has_raw_data());
-  int count = tp.string_data().size();
+  auto count = tp.string_data().size();
   EXPECT_EQ(count, 6);
   const auto* data = tp.string_data().data();
   for (int x = 0; x < 6; ++x) {
@@ -861,7 +861,7 @@ TEST(MLValueToTensorProtoTests, Int64ToRaw) {
 
   // Verify data
   EXPECT_TRUE(tp.has_raw_data());
-  int count = tp.raw_data().size() / sizeof(int64_t);
+  auto count = tp.raw_data().size() / sizeof(int64_t);
   EXPECT_EQ(count, 6);
 
   auto raw = tp.raw_data().data();
@@ -935,7 +935,7 @@ TEST(MLValueToTensorProtoTests, UInt32ToRaw) {
 
   // Verify data
   EXPECT_TRUE(tp.has_raw_data());
-  int count = tp.raw_data().size() / sizeof(uint32_t);
+  auto count = tp.raw_data().size() / sizeof(uint32_t);
   EXPECT_EQ(count, 6);
 
   auto raw = tp.raw_data().data();
@@ -973,7 +973,7 @@ TEST(MLValueToTensorProtoTests, UInt32ToUint64Data) {
 
   // Verify data
   EXPECT_FALSE(tp.has_raw_data());
-  int count = tp.uint64_data().size() * (sizeof(uint64_t) / sizeof(uint32_t));
+  auto count = tp.uint64_data().size() * (sizeof(uint64_t) / sizeof(uint32_t));
   EXPECT_EQ(count, 6);
 
   auto data = tp.uint64_data().data();
@@ -1012,7 +1012,7 @@ TEST(MLValueToTensorProtoTests, UInt64ToRaw) {
 
   // Verify data
   EXPECT_TRUE(tp.has_raw_data());
-  int count = tp.raw_data().size() / sizeof(uint64_t);
+  auto count = tp.raw_data().size() / sizeof(uint64_t);
   EXPECT_EQ(count, 6);
 
   auto raw = tp.raw_data().data();
@@ -1086,7 +1086,7 @@ TEST(MLValueToTensorProtoTests, DoubleToRaw) {
 
   // Verify data
   EXPECT_TRUE(tp.has_raw_data());
-  int count = tp.raw_data().size() / sizeof(uint64_t);
+  auto count = tp.raw_data().size() / sizeof(uint64_t);
   EXPECT_EQ(count, 6);
 
   auto raw = tp.raw_data().data();
