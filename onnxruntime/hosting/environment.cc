@@ -24,8 +24,34 @@ HostingEnvironment::HostingEnvironment(logging::Severity severity) : severity_(s
   session = std::make_unique<onnxruntime::InferenceSession>(options_, &default_logging_manager_);
 }
 
-const logging::Logger& HostingEnvironment::GetAppLogger() {
+common::Status HostingEnvironment::InitializeModel(const std::string& model_path) {
+  auto status = session->Load(model_path);
+  if (!status.IsOK()) {
+    return status;
+  }
+
+  auto outputs = session->GetModelOutputs();
+  if (!outputs.first.IsOK()) {
+    return outputs.first;
+  }
+
+  for (const auto* output_node : *(outputs.second)) {
+    model_output_names_.push_back(output_node->Name());
+  }
+
+  return common::Status::OK();
+}
+
+const std::vector<std::string>& HostingEnvironment::GetModelOutputNames() const {
+  return model_output_names_;
+}
+
+const logging::Logger& HostingEnvironment::GetAppLogger() const {
   return default_logging_manager_.DefaultLogger();
+}
+
+logging::Severity HostingEnvironment::GetLogSeverity() const {
+  return severity_;
 }
 
 std::unique_ptr<logging::Logger> HostingEnvironment::GetLogger(const std::string& id) {
@@ -34,6 +60,10 @@ std::unique_ptr<logging::Logger> HostingEnvironment::GetLogger(const std::string
   }
 
   return default_logging_manager_.CreateLogger(id, severity_, false);
+}
+
+onnxruntime::InferenceSession* HostingEnvironment::GetSession() const {
+  return session.get();
 }
 
 }  // namespace hosting

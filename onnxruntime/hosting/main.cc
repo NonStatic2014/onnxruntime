@@ -25,15 +25,15 @@ int main(int argc, char* argv[]) {
   LOGS(logger, VERBOSE) << "Logging manager initialized.";
   LOGS(logger, VERBOSE) << "Model path: " << config.model_path;
 
-  auto status = env->session->Load(config.model_path);
+  auto status = env->InitializeModel(config.model_path);
   if (!status.IsOK()) {
-    LOGS(logger, FATAL) << "Load Model Failed: " << status.Code() << " ---- Error: [" << status.ErrorMessage() << "]";
+    LOGS(logger, FATAL) << "Initialize Model Failed: " << status.Code() << " ---- Error: [" << status.ErrorMessage() << "]";
     exit(EXIT_FAILURE);
   } else {
-    LOGS(logger, VERBOSE) << "Load Model Successfully!";
+    LOGS(logger, VERBOSE) << "Initialize Model Successfully!";
   }
 
-  status = env->session->Initialize();
+  status = env->GetSession()->Initialize();
   if (!status.IsOK()) {
     LOGS(logger, FATAL) << "Session Initialization Failed:" << status.Code() << " ---- Error: [" << status.ErrorMessage() << "]";
     exit(EXIT_FAILURE);
@@ -58,6 +58,11 @@ int main(int argc, char* argv[]) {
         LOGS(*logger, VERBOSE) << "Error message: " << context.error_message;
 
         context.response.result(context.error_code);
+        context.response.insert("Content-Type", "application/json");
+        context.response.insert("x-ms-request-id", context.request_id);
+        if (!context.client_request_id.empty()) {
+          context.response.insert("x-ms-client-request-id", (context).client_request_id);
+        }
         context.response.body() = hosting::CreateJsonError(context.error_code, context.error_message);
       });
 
