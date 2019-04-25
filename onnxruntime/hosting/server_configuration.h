@@ -40,7 +40,7 @@ class ServerConfiguration {
   const std::string full_desc = "ONNX Hosting: host an ONNX model with ONNX Runtime";
   std::string model_path;
   std::string address = "0.0.0.0";
-  int http_port = 8001;
+  unsigned short http_port = 8001;
   int num_http_threads = std::thread::hardware_concurrency();
   onnxruntime::logging::Severity logging_level{};
 
