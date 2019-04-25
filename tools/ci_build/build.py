@@ -575,9 +575,19 @@ def run_hosting_tests(build_dir, configs):
     run_subprocess([sys.executable, '-m', 'pip', 'install', '--trusted-host', 'files.pythonhosted.org', 'requests'])
     for config in configs:
         config_build_dir = get_config_build_dir(build_dir, config)
-        hosting_app_path = os.path.join(config_build_dir, 'onnxruntime_hosting')
+        if is_windows():
+            hosting_app_path = os.path.join(config_build_dir, config, 'onnxruntime_hosting.exe')
+        else:
+            hosting_app_path = os.path.join(config_build_dir, 'onnxruntime_hosting')
+
         hosting_test_folder = os.path.join(config_build_dir, 'hosting_test')
-        hosting_test_data_folder = os.path.join(os.path.join(config_build_dir, 'testdata'), 'hosting')
+        print(config_build_dir)
+        print(hosting_test_folder)
+
+        if is_windows():
+            hosting_test_data_folder = os.path.join(config_build_dir, config, 'testdata', 'hosting')
+        else:
+            hosting_test_data_folder = os.path.join(config_build_dir, 'testdata', 'hosting')
         run_subprocess([sys.executable, 'test_main.py', hosting_app_path, hosting_test_data_folder, hosting_test_data_folder], cwd=hosting_test_folder, dll_path=None)
 
 def build_python_wheel(source_dir, build_dir, configs, use_cuda, use_ngraph, use_tensorrt, nightly_build = False):
