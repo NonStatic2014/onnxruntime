@@ -2,7 +2,7 @@ set(BOOST_REQUESTED_VERSION 1.69.0 CACHE STRING "")
 set(BOOST_SHA1 8f32d4617390d1c2d16f26a27ab60d97807b35440d45891fa340fc2648b04406 CACHE STRING "")
 set(BOOST_USE_STATIC_LIBS true CACHE BOOL "")
 
-set(BOOST_COMPONENTS program_options system thread)
+set(BOOST_COMPONENTS program_options system thread date_time regex)
 
 if(BOOST_USE_STATIC_LIBS)
   set(LIBRARY_PREFIX ${CMAKE_STATIC_LIBRARY_PREFIX})
@@ -53,12 +53,12 @@ macro(DOWNLOAD_BOOST)
   )
 
   ExternalProject_Get_Property(Boost INSTALL_DIR)
-  set(Boost_INCLUDE_DIR ${INSTALL_DIR}/include)
+  set(Boost_INCLUDE_DIR ${INSTALL_DIR}/include/boost-1_69)
 
   macro(libraries_to_fullpath varname)
     set(${varname})
     foreach(component ${BOOST_COMPONENTS})
-      list(APPEND ${varname} ${INSTALL_DIR}/lib/${LIBRARY_PREFIX}boost_${component}${LIBRARY_SUFFIX})
+      list(APPEND ${varname} ${INSTALL_DIR}/lib/lib${LIBRARY_PREFIX}boost_${component}-vc141-mt-gd-x64-1_69${LIBRARY_SUFFIX})
     endforeach()
   endmacro()
 
