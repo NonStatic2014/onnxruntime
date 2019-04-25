@@ -591,13 +591,16 @@ if (onnxruntime_BUILD_HOSTING)
 
   add_custom_command(
     TARGET onnxruntime_hosting_tests POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:${test_data_target}>/hosting_test
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/hosting_test
     COMMAND ${CMAKE_COMMAND} -E copy
       ${onnxruntime_integration_test_hosting_src}
-      $<TARGET_FILE_DIR:${test_data_target}>/hosting_test/
+      ${CMAKE_CURRENT_BINARY_DIR}/hosting_test/
     COMMAND ${CMAKE_COMMAND} -E copy
-      $<TARGET_FILE_DIR:${test_data_target}>/*_pb2.py
-      $<TARGET_FILE_DIR:${test_data_target}>/hosting_test/
+      ${CMAKE_CURRENT_BINARY_DIR}/onnx_ml_pb2.py
+      ${CMAKE_CURRENT_BINARY_DIR}/hosting_test/
+    COMMAND ${CMAKE_COMMAND} -E copy
+      ${CMAKE_CURRENT_BINARY_DIR}/predict_pb2.py
+      ${CMAKE_CURRENT_BINARY_DIR}/hosting_test/
   )
 
 endif()
