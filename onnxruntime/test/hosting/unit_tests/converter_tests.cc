@@ -119,8 +119,8 @@ TEST(MLValueToTensorProtoTests, FloatToRaw) {
   EXPECT_EQ(count, 6);
 
   auto raw = tp.raw_data().data();
-  const float* tensor_data = reinterpret_cast<const float*>(raw);
-  for (int j = 0; j < count; ++j) {
+  const auto* tensor_data = reinterpret_cast<const float*>(raw);
+  for (size_t j = 0; j < count; ++j) {
     EXPECT_FLOAT_EQ(tensor_data[j], values_mul_x[j]);
   }
 }
@@ -193,8 +193,8 @@ TEST(MLValueToTensorProtoTests, Int32ToRaw) {
   EXPECT_EQ(count, 6);
 
   auto raw = tp.raw_data().data();
-  const int32_t* tensor_data = reinterpret_cast<const int32_t*>(raw);
-  for (int j = 0; j < count; ++j) {
+  const auto* tensor_data = reinterpret_cast<const int32_t*>(raw);
+  for (size_t j = 0; j < count; ++j) {
     EXPECT_EQ(tensor_data[j], values_mul_x[j]);
   }
 }
@@ -268,7 +268,7 @@ TEST(MLValueToTensorProtoTests, UInt8ToRaw) {
 
   auto raw = tp.raw_data().data();
   const auto* tensor_data = reinterpret_cast<const uint8_t*>(raw);
-  for (int j = 0; j < count; ++j) {
+  for (size_t j = 0; j < count; ++j) {
     EXPECT_EQ(tensor_data[j], values_mul_x[j]);
   }
 }
@@ -344,7 +344,7 @@ TEST(MLValueToTensorProtoTests, Int8ToRaw) {
 
   auto raw = tp.raw_data().data();
   const auto* tensor_data = reinterpret_cast<const int8_t*>(raw);
-  for (int j = 0; j < count; ++j) {
+  for (size_t j = 0; j < count; ++j) {
     EXPECT_EQ(tensor_data[j], values_mul_x[j]);
   }
 }
@@ -420,7 +420,7 @@ TEST(MLValueToTensorProtoTests, UInt16ToRaw) {
 
   auto raw = tp.raw_data().data();
   const auto* tensor_data = reinterpret_cast<const uint16_t*>(raw);
-  for (int j = 0; j < count; ++j) {
+  for (size_t j = 0; j < count; ++j) {
     EXPECT_EQ(tensor_data[j], values_mul_x[j]);
   }
 }
@@ -496,7 +496,7 @@ TEST(MLValueToTensorProtoTests, Int16ToRaw) {
 
   auto raw = tp.raw_data().data();
   const auto* tensor_data = reinterpret_cast<const int16_t*>(raw);
-  for (int j = 0; j < count; ++j) {
+  for (size_t j = 0; j < count; ++j) {
     EXPECT_EQ(tensor_data[j], values_mul_x[j]);
   }
 }
@@ -572,7 +572,7 @@ TEST(MLValueToTensorProtoTests, BoolToRaw) {
 
   auto raw = tp.raw_data().data();
   const auto* tensor_data = reinterpret_cast<const bool*>(raw);
-  for (int j = 0; j < count; ++j) {
+  for (size_t j = 0; j < count; ++j) {
     EXPECT_EQ(tensor_data[j], values_mul_x[j]);
   }
 }
@@ -654,7 +654,7 @@ TEST(MLValueToTensorProtoTests, Float16ToRaw) {
 
   auto raw = tp.raw_data().data();
   const auto* tensor_data = reinterpret_cast<const onnxruntime::MLFloat16*>(raw);
-  for (int j = 0; j < count; ++j) {
+  for (size_t j = 0; j < count; ++j) {
     EXPECT_EQ(tensor_data[j], values_mul_x[j]);
   }
 }
@@ -742,7 +742,7 @@ TEST(MLValueToTensorProtoTests, BFloat16ToRaw) {
 
   auto raw = tp.raw_data().data();
   const auto* tensor_data = reinterpret_cast<const uint16_t*>(raw);
-  for (int j = 0; j < count; ++j) {
+  for (size_t j = 0; j < count; ++j) {
     EXPECT_EQ(tensor_data[j], values_mul_x[j].val);
   }
 }
@@ -865,8 +865,8 @@ TEST(MLValueToTensorProtoTests, Int64ToRaw) {
   EXPECT_EQ(count, 6);
 
   auto raw = tp.raw_data().data();
-  const int64_t* tensor_data = reinterpret_cast<const int64_t*>(raw);
-  for (int j = 0; j < count; ++j) {
+  const auto* tensor_data = reinterpret_cast<const int64_t*>(raw);
+  for (size_t j = 0; j < count; ++j) {
     EXPECT_EQ(tensor_data[j], values_mul_x[j]);
   }
 }
@@ -939,8 +939,8 @@ TEST(MLValueToTensorProtoTests, UInt32ToRaw) {
   EXPECT_EQ(count, 6);
 
   auto raw = tp.raw_data().data();
-  uint32_t* tensor_data = (uint32_t*)raw;
-  for (int j = 0; j < count; ++j) {
+  auto* tensor_data = (uint32_t*)raw;
+  for (size_t j = 0; j < count; ++j) {
     EXPECT_EQ(tensor_data[j], values_mul_x[j]);
   }
 }
@@ -978,7 +978,7 @@ TEST(MLValueToTensorProtoTests, UInt32ToUint64Data) {
 
   auto data = tp.uint64_data().data();
   const auto* data32 = reinterpret_cast<const uint32_t*>(data);
-  for (int x = 0; x < count; ++x) {
+  for (size_t x = 0; x < count; ++x) {
     EXPECT_EQ(data32[x], values_mul_x[x]);
   }
 }
@@ -1016,8 +1016,8 @@ TEST(MLValueToTensorProtoTests, UInt64ToRaw) {
   EXPECT_EQ(count, 6);
 
   auto raw = tp.raw_data().data();
-  const uint64_t* tensor_data = reinterpret_cast<const uint64_t*>(raw);
-  for (int j = 0; j < count; ++j) {
+  const auto* tensor_data = reinterpret_cast<const uint64_t*>(raw);
+  for (size_t j = 0; j < count; ++j) {
     EXPECT_EQ(tensor_data[j], values_mul_x[j]);
   }
 }
@@ -1090,8 +1090,8 @@ TEST(MLValueToTensorProtoTests, DoubleToRaw) {
   EXPECT_EQ(count, 6);
 
   auto raw = tp.raw_data().data();
-  const double* tensor_data = reinterpret_cast<const double*>(raw);
-  for (int j = 0; j < count; ++j) {
+  const auto* tensor_data = reinterpret_cast<const double*>(raw);
+  for (size_t j = 0; j < count; ++j) {
     EXPECT_DOUBLE_EQ(tensor_data[j], values_mul_x[j]);
   }
 }
