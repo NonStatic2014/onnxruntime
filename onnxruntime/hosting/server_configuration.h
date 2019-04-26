@@ -97,9 +97,6 @@ class ServerConfiguration {
     } else if (num_http_threads <= 0) {
       PrintHelp(std::cerr, "num_http_threads must be greater than 0");
       return Result::ExitFailure;
-    } else if (http_port < 0 || http_port > 65535) {
-      PrintHelp(std::cerr, "http_port input invalid");
-      return Result::ExitFailure;
     } else if (!file_exists(model_path)) {
       PrintHelp(std::cerr, "model_path must be the location of a valid file");
       return Result::ExitFailure;
