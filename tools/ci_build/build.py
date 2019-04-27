@@ -572,7 +572,7 @@ def run_onnx_tests(build_dir, configs, onnx_test_data_dir, provider, enable_para
 
 
 def run_server_tests(build_dir, configs):
-    run_subprocess([sys.executable, '-m', 'pip', 'install', '--trusted-host', 'files.pythonhosted.org', 'requests'])
+    run_subprocess([sys.executable, '-m', 'pip', 'install', '--trusted-host', 'files.pythonhosted.org', 'requests', 'protobuf', 'numpy'])
     for config in configs:
         config_build_dir = get_config_build_dir(build_dir, config)
         server_app_path = os.path.join(config_build_dir, 'onnxruntime_server')
