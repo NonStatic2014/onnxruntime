@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-#include <boost/beast/core/bind_handler.hpp>
 #include "session.h"
 
 namespace onnxruntime {
@@ -45,7 +44,7 @@ void HttpSession::OnRead(beast::error_code ec, std::size_t bytes_transferred) {
   }
 
   // Send the response
-  HandleRequest(std::move(req_->release()));
+  HandleRequest(req_->release());
 }
 
 void HttpSession::OnWrite(beast::error_code ec, std::size_t bytes_transferred, bool close) {
