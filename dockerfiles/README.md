@@ -76,15 +76,13 @@
 
 1. Build the docker image from the directory that contains our server "onnxruntime_server"
   ```
-  
   docker build -t {docker_image_name} .
   ```
   
-2. Run the ONNXRuntime server on Docker image
+2. Run the ONNXRuntime server in Docker image
 
   ```
-
-  docker run -it -v {localModelAbsoluteFolder}:{dockerModelAbsoluteFolder} -e MODELABSOLUTEPATH={dockerModelAbsolutePath} -p {your_local_port}:8001 {imageName}
+  docker run -it -v {localModelAbsoluteFolder}:{dockerModelAbsoluteFolder} -e MODEL_ABSOLUTE_PATH={dockerModelAbsolutePath} -p {your_local_port}:8001 {imageName}
   ```
 3. Send the request to server
 
