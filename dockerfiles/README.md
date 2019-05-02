@@ -72,6 +72,29 @@
   
   docker run -it onnxruntime-ngraph
   ```
+## nGraph Version (Preview)
+#### Linux 16.04, Python Bindings
+
+1. Build the docker image from the workspace that contains our server "onnxruntime_server"
+  ```
+  # If you have a Linux machine, preface this command with "sudo"
+  
+  docker build -t onnxruntime-ngraph -f Dockerfile.ngraph .
+  ```
+
+2. Run the Docker image
+
+  ```
+  # If you have a Linux machine, preface this command with "sudo"
+  
+  docker run -it -v {localModelAbsolutePath}:{dockerModelAbsolutePath} -e MODELABSOLUTEPATH={dockerModelAbsolutePath} -p {your_local_port}:8001 {imageName}
+  ```
+3. Run the Docker server
+
+  ```
+  Send the request to the docker from the binding local port:
+  curl  -X POST -d "@request.json" -H "Content-Type: application/json" http://0.0.0.0:{your_local_port}/v1/models/mymodel/versions/3:predict  
+  ```
 
 ### Other options to get started with ONNX Runtime
 
