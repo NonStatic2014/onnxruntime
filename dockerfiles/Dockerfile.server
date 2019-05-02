@@ -10,9 +10,9 @@ FROM ubuntu:16.04
 MAINTAINER Harry Yang "huayang@microsoft.com"
 
 WORKDIR /onnxruntime/server/
-ENV MODELABSOLUTEPATH /onnxruntime/model/model.onnx
+ENV MODEL_ABSOLUTE_PATH /onnxruntime/model/model.onnx
 COPY ./onnxruntime_server /onnxruntime/server/
 Run apt-get update \
     && apt-get install -y libgomp1
 
-ENTRYPOINT ./onnxruntime_server --model_path $MODELABSOLUTEPATH
+ENTRYPOINT ./onnxruntime_server --model_path $MODEL_ABSOLUTE_PATH
