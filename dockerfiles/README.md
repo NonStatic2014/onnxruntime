@@ -72,14 +72,14 @@
   
   docker run -it onnxruntime-ngraph
   ```
-## nGraph Version (Preview)
-#### Linux 16.04, Python Bindings
+## Server Version (Preview)
+#### Linux 16.04
 
 1. Build the docker image from the workspace that contains our server "onnxruntime_server"
   ```
   # If you have a Linux machine, preface this command with "sudo"
   
-  docker build -t onnxruntime-ngraph -f Dockerfile.ngraph .
+  docker build -t {docker_image_name} .
   ```
 
 2. Run the Docker image
@@ -87,7 +87,7 @@
   ```
   # If you have a Linux machine, preface this command with "sudo"
   
-  docker run -it -v {localModelAbsolutePath}:{dockerModelAbsolutePath} -e MODELABSOLUTEPATH={dockerModelAbsolutePath} -p {your_local_port}:8001 {imageName}
+  docker run -it -v {localModelAbsoluteFolder}:{dockerModelAbsoluteFolder} -e MODELABSOLUTEPATH={dockerModelAbsolutePath} -p {your_local_port}:8001 {imageName}
   ```
 3. Run the Docker server
 
