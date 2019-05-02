@@ -88,7 +88,7 @@
   ```
 3. Send the request to server
 
- Send the request to the docker through the binding local port:
+ - Send the request to the docker through the binding local port:
   ```
   curl  -X POST -d "@request.json" -H "Content-Type: application/json" http://0.0.0.0:{your_local_port}/v1/models/mymodel/versions/3:predict  
   ```
