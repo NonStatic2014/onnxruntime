@@ -74,7 +74,7 @@
 ## ONNX Runtime Server (Preview)
 #### Linux 16.04
 
-1. Build the docker image from the workspace that contains our server "onnxruntime_server"
+1. Build the docker image from the directory that contains our server "onnxruntime_server"
   ```
   
   docker build -t {docker_image_name} .
