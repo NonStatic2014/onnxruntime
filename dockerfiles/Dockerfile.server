@@ -6,7 +6,6 @@
 # Ubuntu 16.04, CPU version, Python 3.
 #--------------------------------------------------------------------------
 
-
 FROM ubuntu:16.04
 MAINTAINER Harry Yang "huayang@microsoft.com"
 
@@ -14,6 +13,6 @@ WORKDIR /onnxruntime/server/
 ENV MODELABSOLUTEPATH /onnxruntime/model/model.onnx
 COPY ./onnxruntime_server /onnxruntime/server/
 Run apt-get update \
-&& apt-get install -y libgomp1
+    && apt-get install -y libgomp1
 
 ENTRYPOINT ./onnxruntime_server --model_path $MODELABSOLUTEPATH
