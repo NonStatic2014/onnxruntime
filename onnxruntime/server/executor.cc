@@ -54,9 +54,10 @@ protobufutil::Status Executor::SetMLValue(const onnx::TensorProto& input_tensor,
 protobufutil::Status Executor::SetNameMLValueMap(onnxruntime::NameMLValMap& name_value_map, const onnxruntime::server::PredictRequest& request) {
   auto logger = env_->GetLogger(request_id_);
 
-  OrtAllocatorInfo* cpu_allocator_info = nullptr;
-  auto ort_status = OrtCreateAllocatorInfo("Cpu", OrtArenaAllocator, 0, OrtMemTypeDefault, &cpu_allocator_info);
-  if (ort_status != nullptr || cpu_allocator_info == nullptr) {
+  OrtAllocatorInfo* allocator_info = nullptr;
+  auto ort_status = OrtCreateCpuAllocatorInfo(OrtArenaAllocator, OrtMemTypeDefault, &allocator_info);
+
+  if (ort_status != nullptr || allocator_info == nullptr) {
     LOGS(*logger, ERROR) << "OrtCreateAllocatorInfo failed";
     return protobufutil::Status(protobufutil::error::Code::RESOURCE_EXHAUSTED, "OrtCreateAllocatorInfo() failed");
   }
@@ -66,7 +67,7 @@ protobufutil::Status Executor::SetNameMLValueMap(onnxruntime::NameMLValMap& name
     using_raw_data_ = using_raw_data_ && input.second.has_raw_data();
 
     MLValue ml_value;
-    auto status = SetMLValue(input.second, cpu_allocator_info, ml_value);
+    auto status = SetMLValue(input.second, allocator_info, ml_value);
     if (status != protobufutil::Status::OK) {
       LOGS(*logger, ERROR) << "SetMLValue() failed! Input name: " << input.first;
       return status;
