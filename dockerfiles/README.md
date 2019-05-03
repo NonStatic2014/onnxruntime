@@ -60,6 +60,7 @@
 
 1. Build the docker image from the Dockerfile in this repository.
   ```
+  # If you have a Linux machine, preface this command with "sudo"
   
   docker build -t onnxruntime-ngraph -f Dockerfile.ngraph .
   ```
@@ -71,6 +72,7 @@
   
   docker run -it onnxruntime-ngraph
   ```
+
 ## ONNX Runtime Server (Preview)
 #### Linux 16.04
 
@@ -86,7 +88,7 @@
   ```
 3. Send the request to server
 
- - Send the request to the docker through the binding local port:
+  Send the request to the docker through the binding local port. Here is the full [usage document](https://github.com/Microsoft/onnxruntime/blob/master/docs/ONNX_Runtime_Server_Usage.md).
   ```
   curl  -X POST -d "@request.json" -H "Content-Type: application/json" http://0.0.0.0:{your_local_port}/v1/models/mymodel/versions/3:predict  
   ```
