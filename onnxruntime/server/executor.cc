@@ -123,6 +123,12 @@ protobufutil::Status Executor::Predict(const std::string& model_name,
     return GenerateProtobufStatus(status, "Run() failed: " + status.ToString());
   }
 
+  // Manually free all memory in NameMLValMap
+  for (auto& elem : name_ml_value_map) {
+      void* buf = elem.second.GetMutable<Tensor>()->MutableDataRaw();
+      free(buf);
+  }
+
   // Build the response
   for (size_t i = 0, sz = outputs.size(); i < sz; ++i) {
     onnx::TensorProto output_tensor{};
