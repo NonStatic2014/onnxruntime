@@ -69,17 +69,20 @@ protobufutil::Status Executor::SetNameMLValueMap(onnxruntime::NameMLValMap& name
     MLValue ml_value;
     auto status = SetMLValue(input.second, allocator_info, ml_value);
     if (status != protobufutil::Status::OK) {
+      OrtReleaseAllocatorInfo(allocator_info);
       LOGS(*logger, ERROR) << "SetMLValue() failed! Input name: " << input.first;
       return status;
     }
 
     auto insertion_result = name_value_map.insert(std::make_pair(input.first, ml_value));
     if (!insertion_result.second) {
+      OrtReleaseAllocatorInfo(allocator_info);
       LOGS(*logger, ERROR) << "SetNameMLValueMap() failed! Input name: " << input.first << " Trying to overwrite existing input value";
       return protobufutil::Status(protobufutil::error::Code::INVALID_ARGUMENT, "SetNameMLValueMap() failed: Cannot have two inputs with the same name");
     }
   }
 
+  OrtReleaseAllocatorInfo(allocator_info);
   return protobufutil::Status::OK;
 }
 
