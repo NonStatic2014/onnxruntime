@@ -7,6 +7,7 @@ import os
 import test_util
 import sys
 
+
 class ModelZooTests(unittest.TestCase):
     server_ip = '127.0.0.1'
     server_port = 54321
@@ -19,8 +20,10 @@ class ModelZooTests(unittest.TestCase):
     need_data_cleanup = False
     model_zoo_model_path = ''  # Required
     model_zoo_test_data_path = ''  # Required
-    supported_opsets = ['opset_7', 'opset_8', 'opset_9']
-    skipped_models = []
+    supported_opsets = ['opset7', 'opset8', 'opset9']
+    skipped_models = [
+        ('opset7', 'tf_inception_v2'),  # Known issue
+    ]
 
     def test_models_from_model_zoo(self):
         json_request_headers = {
@@ -39,12 +42,16 @@ class ModelZooTests(unittest.TestCase):
 
             if os.path.isdir(test_data_folder):
                 for name in os.listdir(test_data_folder):
-                    if name in self.skipped_models:
+                    if (opset, name) in self.skipped_models:
+                        test_util.test_log("  Skip {0}:{1}".format(opset, name))
                         continue
-                    
+
                     if os.path.isdir(os.path.join(test_data_folder, name)):
                         current_dir = os.path.join(test_data_folder, name)
-                        model_data_map[os.path.join(model_file_folder, name)] = [os.path.join(current_dir, name) for name in os.listdir(current_dir) if os.path.isdir(os.path.join(current_dir, name))]
+                        model_data_map[os.path.join(model_file_folder, name)] = [os.path.join(current_dir, name) for
+                                                                                 name in os.listdir(current_dir) if
+                                                                                 os.path.isdir(
+                                                                                     os.path.join(current_dir, name))]
 
         test_util.test_log('Planned models and test data:')
         for model_data, data_paths in model_data_map.items():
@@ -57,10 +64,12 @@ class ModelZooTests(unittest.TestCase):
         for model_path, data_paths in model_data_map.items():
             server_app_proc = None
             try:
-                cmd = [self.server_app_path, '--http_port', str(self.server_port), '--model_path', os.path.join(model_path, 'model.onnx'), '--log_level', self.log_level]
+                cmd = [self.server_app_path, '--http_port', str(self.server_port), '--model_path',
+                       os.path.join(model_path, 'model.onnx'), '--log_level', self.log_level]
                 test_util.test_log(cmd)
-                server_app_proc = test_util.launch_server_app(cmd, self.server_ip, self.server_port, self.server_ready_in_seconds)
-               
+                server_app_proc = test_util.launch_server_app(cmd, self.server_ip, self.server_port,
+                                                              self.server_ready_in_seconds)
+
                 test_util.test_log('[{0}] Run tests...'.format(model_path))
                 for test in data_paths:
                     test_util.test_log('[{0}] Current: {0}'.format(model_path, test))
