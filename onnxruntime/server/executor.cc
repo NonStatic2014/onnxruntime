@@ -36,7 +36,7 @@ protobufutil::Status Executor::SetMLValue(const onnx::TensorProto& input_tensor,
     return GenerateProtobufStatus(status, "GetSizeInBytesFromTensorProto() failed: " + status.ToString());
   }
 
-  std::unique_ptr<char[]> data(new char[cpu_tensor_length]);
+  std::unique_ptr<uint8_t[]> data(new uint8_t[cpu_tensor_length]);
   memset(data.get(), 0, cpu_tensor_length);
 
   OrtCallback deleter;
@@ -128,7 +128,7 @@ protobufutil::Status Executor::Predict(const std::string& model_name,
 
   // Manually free all memory in NameMLValMap
   for (auto& elem : name_ml_value_map) {
-      auto* buf = elem.second.GetMutable<Tensor>()->MutableData<uint8_t >();
+      auto* buf = static_cast<uint8_t*>(elem.second.GetMutable<Tensor>()->MutableDataRaw());
       delete[] buf;
   }
 
