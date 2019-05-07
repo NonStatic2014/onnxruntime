@@ -128,7 +128,7 @@ protobufutil::Status Executor::Predict(const std::string& model_name,
 
   // Manually free all memory in NameMLValMap
   for (auto& elem : name_ml_value_map) {
-      void* buf = elem.second.GetMutable<Tensor>()->MutableDataRaw();
+      auto* buf = elem.second.GetMutable<Tensor>()->MutableData<uint8_t >();
       delete[] buf;
   }
 
