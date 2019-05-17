@@ -6,6 +6,9 @@
 #include "predict_request_handler.h"
 #include "server_configuration.h"
 
+#define STR_EXPAND(tok) #tok
+#define STR(tok) STR_EXPAND(tok)
+
 namespace beast = boost::beast;
 namespace http = beast::http;
 namespace server = onnxruntime::server;
@@ -22,6 +25,9 @@ int main(int argc, char* argv[]) {
 
   const auto env = std::make_shared<server::ServerEnvironment>(config.logging_level);
   auto logger = env->GetAppLogger();
+
+  LOGS(logger, VERBOSE) << "Server Version: " << STR(ORTSRV_VERSION);
+
   LOGS(logger, VERBOSE) << "Logging manager initialized.";
   LOGS(logger, INFO) << "Model path: " << config.model_path;
 

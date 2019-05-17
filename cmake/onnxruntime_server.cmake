@@ -3,6 +3,10 @@
 
 set(SERVER_APP_NAME "onnxruntime_server")
 
+set(BUILD_NUMBER local-build CACHE STRING "")
+add_definitions(-DORTSRV_VERSION="${BUILD_NUMBER}")
+message(STATUS "Current server version = ${BUILD_NUMBER}")
+
 # Generate .h and .cc files from protobuf file
 add_library(server_proto ${ONNXRUNTIME_ROOT}/server/protobuf/predict.proto)
 if(WIN32)
